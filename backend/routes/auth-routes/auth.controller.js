@@ -5,10 +5,8 @@ import { meFn } from "./functions/me.js";
 
 export async function register(req, res, next) {
   try {
-    const { email, password, role, customer } = req.body;
-    res.json(
-      await registerFn({ email, password, role, customerPayload: customer })
-    );
+    const { email, password, role, customer_name } = req.body;
+    res.json(await registerFn({ email, password, role, customer_name }));
   } catch (e) {
     next(e);
   }

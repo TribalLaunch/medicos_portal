@@ -6,17 +6,16 @@ import Customer from "../../../models/Customer.js";
 export async function registerFn({
   email,
   password,
-  role = "clinic",
-  customerPayload,
+  role = "customer",
+  customer_name,
 }) {
   const existing = await User.findOne({ email });
   if (existing) throw new Error("Email already in use");
 
   let customerId = null;
-  if (role === "clinic" && customerPayload) {
+  if (role === "customer") {
     const c = await Customer.create({
-      ...customerPayload,
-      user_type: "Clinic",
+      customer_name: customer_name,
     });
     customerId = c._id;
   }

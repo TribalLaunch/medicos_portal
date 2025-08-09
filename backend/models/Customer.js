@@ -3,9 +3,10 @@ const Schema = mongoose.Schema;
 
 const CustomerSchema = new Schema(
   {
-    name: String,
+    customer_name: String,
     primary_email: String,
     phone: String,
+    customer_number: String,
     address: [
       {
         label: String,

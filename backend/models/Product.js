@@ -7,7 +7,7 @@ const ProductSchema = new Schema(
     manufacturer: String,
     name: String,
     category: String,
-    uom: String,
+    uom: String, //unit of measurement
     description: String,
     sizing: String,
     priceMSRP: Number,
