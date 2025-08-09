@@ -12,7 +12,7 @@ import { config } from "./config/env.js";
 import { errorHandler } from "./middleware/error.js";
 
 // Routers
-import healthRoutes from "./routes/health-routes/health.routes.js";
+import healthRoutes from "./routes/health-routes/routes.js";
 import authRoutes from "./routes/auth-routes/auth.routes.js";
 import productRoutes from "./routes/product-routes/products.routes.js";
 import checkoutRoutes from "./routes/checkout-routes/checkout.routes.js";
