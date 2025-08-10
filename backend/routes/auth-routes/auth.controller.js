@@ -2,11 +2,12 @@
 import { registerFn } from "./functions/register.js";
 import { loginFn } from "./functions/login.js";
 import { meFn } from "./functions/me.js";
+import { changePasswordFn } from "./functions/changePassword.js";
 
 export async function register(req, res, next) {
   try {
-    const { email, password, role, customer_name } = req.body;
-    res.json(await registerFn({ email, password, role, customer_name }));
+    const { email, password, role, customer_name, name } = req.body;
+    res.json(await registerFn({ email, password, role, customer_name, name }));
   } catch (e) {
     next(e);
   }
@@ -24,6 +25,21 @@ export async function login(req, res, next) {
 export async function me(req, res, next) {
   try {
     res.json(await meFn(req.user.id));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function changePassword(req, res, next) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    res.json(
+      await changePasswordFn({
+        userId: req.user.id,
+        currentPassword,
+        newPassword,
+      })
+    );
   } catch (e) {
     next(e);
   }

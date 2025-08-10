@@ -6,7 +6,13 @@ const CustomerSchema = new Schema(
     customer_name: String,
     primary_email: String,
     phone: String,
-    customer_number: String,
+    customer_number: { type: String, unique: true, sparse: true },
+    user_type: {
+      type: String,
+      enum: ["Clinic", "Hospital", "Patient", "Other"],
+      default: "Clinic",
+    },
+    salesRepId: { type: mongoose.Types.ObjectId, ref: "User", index: true }, // assigned Sales user
     address: [
       {
         label: String,

@@ -19,6 +19,7 @@ import checkoutRoutes from "./routes/checkout-routes/checkout.routes.js";
 import orderRoutes from "./routes/order-routes/orders.routes.js";
 import adminRoutes from "./routes/admin-routes/admin.routes.js";
 import stripeWebhookRoutes from "./routes/webhooks/stripe.routes.js";
+import salesRoutes from "./routes/sales-routes/sales.routes.js";
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/sales", salesRoutes);
 
 // Mount the webhook router AFTER raw-body middleware registration above
 // stripe.routes.js defines r.post('/stripe', stripeWebhook)

@@ -8,6 +8,7 @@ export async function registerFn({
   password,
   role = "customer",
   customer_name,
+  name,
 }) {
   const existing = await User.findOne({ email });
   if (existing) throw new Error("Email already in use");
@@ -21,6 +22,12 @@ export async function registerFn({
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = await User.create({ email, passwordHash, role, customerId });
+  const user = await User.create({
+    email,
+    passwordHash,
+    role,
+    customerId,
+    name,
+  });
   return { id: user._id, role: user.role, customerId };
 }

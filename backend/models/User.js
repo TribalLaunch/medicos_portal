@@ -22,9 +22,12 @@ const UserSchema = new Schema(
       enum: ["guest", "customer", "admin", "sales"],
       default: "customer",
     },
+    name: String,
     customerId: { type: mongoose.Types.ObjectId, ref: "Customer" },
     isOTPEnabled: { type: Boolean, default: false },
     addresses: [AddressSchema],
+    mustChangePassword: { type: Boolean, default: false },
+    tempPasswordIssuedAt: { type: Date },
   },
   { timestamps: true }
 );

@@ -14,5 +14,9 @@ export async function loginFn({ email, password }) {
     config.jwtSecret,
     { expiresIn: "7d" }
   );
-  return { token, role: user.role };
+  return {
+    token,
+    role: user.role,
+    mustChangePassword: !!user.mustChangePassword,
+  };
 }

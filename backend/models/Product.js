@@ -9,7 +9,7 @@ const ProductSchema = new Schema(
     category: String,
     uom: String, //unit of measurement
     description: String,
-    sizing: String,
+    sizing: [{ type: String }],
     priceMSRP: Number,
     imageUrl: String,
     requiresPrescription: { type: Boolean, default: false },

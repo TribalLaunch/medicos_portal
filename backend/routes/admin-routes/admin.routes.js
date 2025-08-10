@@ -6,6 +6,9 @@ import {
   updateOrderStatus,
   getProductUploadUrl,
   deleteProductImage,
+  createSalesUser,
+  assignSalesToCustomer,
+  unassignSalesFromCustomer,
 } from "./admin.controller.js";
 import { requireAdmin } from "../../middleware/auth.js";
 
@@ -15,4 +18,7 @@ r.get("/orders", requireAdmin, listOrdersAdmin);
 r.patch("/orders/:id/status", requireAdmin, updateOrderStatus);
 r.post("/products/upload-url", requireAdmin, getProductUploadUrl);
 r.delete("/products/image", requireAdmin, deleteProductImage);
+r.post("/users/sales", requireAdmin, createSalesUser);
+r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
+r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
 export default r;
