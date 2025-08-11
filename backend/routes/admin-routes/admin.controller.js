@@ -4,11 +4,11 @@ import { listOrdersAdminFn } from "./functions/list_orders_admin.js";
 import { updateOrderStatusFn } from "./functions/update_order_status.js";
 import { getUploadUrlFn } from "./functions/get_upload_url.js";
 import { deleteImageFn } from "./functions/delete_image.js";
-import { createSalesUserFn } from "./functions/createSalesUser.js";
+import { createSalesUserFn } from "./functions/create_sales_user.js";
 import {
   assignSalesToCustomerFn,
   unassignSalesFromCustomerFn,
-} from "./functions/assignSalesToCustomer.js";
+} from "./functions/assign_sales_to_customer.js";
 
 export async function upsertProduct(req, res, next) {
   try {

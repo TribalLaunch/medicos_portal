@@ -85,7 +85,7 @@ if (process.env.NODE_ENV === "production") {
 function startHttpServer() {
   const port = Number(config.port || 5000);
   app.listen(port, () => {
-    console.log(`✅ API listening on :${port}`);
+    console.log(`✅ API listening on: ${port}`);
   });
 }
 
