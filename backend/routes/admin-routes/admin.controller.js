@@ -9,6 +9,8 @@ import {
   assignSalesToCustomerFn,
   unassignSalesFromCustomerFn,
 } from "./functions/assign_sales_to_customer.js";
+import { addProductImageFn } from "./functions/add_product_image.js";
+import { removeProductImageFn } from "./functions/remove_product_image.js";
 
 export async function upsertProduct(req, res, next) {
   try {
@@ -55,8 +57,8 @@ export async function deleteProductImage(req, res, next) {
 
 export async function createSalesUser(req, res, next) {
   try {
-    const { email, sendEmail } = req.body;
-    res.json(await createSalesUserFn({ email, sendEmail }));
+    const { email, sendEmail, name } = req.body;
+    res.json(await createSalesUserFn({ email, sendEmail, name }));
   } catch (e) {
     next(e);
   }
@@ -75,6 +77,24 @@ export async function unassignSalesFromCustomer(req, res, next) {
   try {
     const { customerId } = req.body;
     res.json(await unassignSalesFromCustomerFn({ customerId }));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function addProductImage(req, res, next) {
+  try {
+    const { sku, image, makePrimary } = req.body; // image = { key, url, alt }
+    res.json(await addProductImageFn({ sku, image, makePrimary }));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function removeProductImage(req, res, next) {
+  try {
+    const { sku, key } = req.body;
+    res.json(await removeProductImageFn({ sku, key }));
   } catch (e) {
     next(e);
   }

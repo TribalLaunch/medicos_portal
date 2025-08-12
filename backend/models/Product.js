@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
+const ImageSchema = new mongoose.Schema(
+  {
+    key: String, // S3 key (images/products/SKU/...jpg)
+    url: String, // CloudFront URL
+    alt: String,
+  },
+  { _id: false }
+);
+
 const ProductSchema = new Schema(
   {
     sku: { type: String, unique: true, index: true },
@@ -11,7 +20,8 @@ const ProductSchema = new Schema(
     description: String,
     sizing: [{ type: String }],
     priceMSRP: Number,
-    imageUrl: String,
+    images: [ImageSchema],
+    primaryImageIndex: { type: Number, default: 0 },
     requiresPrescription: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
   },

@@ -11,7 +11,7 @@ function genTempPassword() {
   return `${part()}-${part()}`;
 }
 
-export async function createSalesUserFn({ email, sendEmail = true }) {
+export async function createSalesUserFn({ email, sendEmail = true, name }) {
   const existing = await User.findOne({ email });
   if (existing) throw new Error("Email already in use");
 
@@ -20,6 +20,7 @@ export async function createSalesUserFn({ email, sendEmail = true }) {
 
   const user = await User.create({
     email,
+    name,
     passwordHash,
     role: "sales",
     mustChangePassword: true,
