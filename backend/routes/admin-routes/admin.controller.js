@@ -3,7 +3,6 @@ import { upsertProductFn } from "./functions/upsert_product.js";
 import { listOrdersAdminFn } from "./functions/list_orders_admin.js";
 import { updateOrderStatusFn } from "./functions/update_order_status.js";
 import { getUploadUrlFn } from "./functions/get_upload_url.js";
-import { deleteImageFn } from "./functions/delete_image.js";
 import { createSalesUserFn } from "./functions/create_sales_user.js";
 import {
   assignSalesToCustomerFn,
@@ -38,18 +37,8 @@ export async function updateOrderStatus(req, res, next) {
 
 export async function getProductUploadUrl(req, res, next) {
   try {
-    const { fileName, contentType } = req.body;
-    res.json(await getUploadUrlFn({ fileName, contentType }));
-  } catch (e) {
-    next(e);
-  }
-}
-
-export async function deleteProductImage(req, res, next) {
-  try {
-    const { key } = req.body;
-    const result = await deleteImageFn({ key });
-    res.json(result);
+    const { sku, fileName, contentType } = req.body;
+    res.json(await getUploadUrlFn({ sku, fileName, contentType }));
   } catch (e) {
     next(e);
   }
