@@ -32,6 +32,7 @@ app.use("/api/webhooks/stripe", bodyParser.raw({ type: "application/json" }));
 
 // --- JSON for everything else ---
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // --- CORS ---
 const allowedOrigins = [config.clientUrl].filter(Boolean);

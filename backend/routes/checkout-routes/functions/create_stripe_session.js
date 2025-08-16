@@ -16,6 +16,20 @@ export async function createStripeSessionFn({
   const priced = await priceCart({ items, customerId });
   const shipping = Number(flatRate || 0);
 
+  // 1) Create a Pending Order
+  const order = await Order.create({
+    customerId: customerId || null,
+    items: priced.items,
+    shippingAddress,
+    subtotal: priced.subtotal,
+    shipping,
+    total: priced.subtotal + shipping,
+    status: "new",
+    // stripeSessionId: session.id,
+    events: ["created"],
+  });
+
+  // Create Stripe Checkout Session
   const line_items = priced.items.map((i) => ({
     price_data: {
       currency: "usd",
@@ -30,20 +44,24 @@ export async function createStripeSessionFn({
     line_items,
     success_url: `${clientUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${clientUrl}/cart`,
-    metadata: { customerId: customerId || "" },
+    metadata: { orderId: String(order._id) },
   });
 
-  const order = await Order.create({
-    customerId: customerId || null,
-    items: priced.items,
-    shippingAddress,
-    subtotal: priced.subtotal,
-    shipping,
-    total: priced.subtotal + shipping,
-    status: "new",
-    stripeSessionId: session.id,
-    events: ["created"],
-  });
+  // Write back to the Stripe Session id we so we have
+  order.stripeSessionId = session.id;
+  await order.save();
+
+  // const order = await Order.create({
+  //   customerId: customerId || null,
+  //   items: priced.items,
+  //   shippingAddress,
+  //   subtotal: priced.subtotal,
+  //   shipping,
+  //   total: priced.subtotal + shipping,
+  //   status: "new",
+  //   stripeSessionId: session.id,
+  //   events: ["created"],
+  // });
 
   return { url: session.url, orderId: order._id };
 }
