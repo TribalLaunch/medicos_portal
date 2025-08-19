@@ -10,6 +10,7 @@ import {
 } from "./functions/assign_sales_to_customer.js";
 import { addProductImageFn } from "./functions/add_product_image.js";
 import { removeProductImageFn } from "./functions/remove_product_image.js";
+import { listCustomersFn } from "./functions/list_customers.js";
 
 export async function upsertProduct(req, res, next) {
   try {
@@ -84,6 +85,14 @@ export async function removeProductImage(req, res, next) {
   try {
     const { sku, key } = req.body;
     res.json(await removeProductImageFn({ sku, key }));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function listCustomers(req, res, next) {
+  try {
+    res.json(await listCustomersFn(req, res));
   } catch (e) {
     next(e);
   }

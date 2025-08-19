@@ -51,17 +51,5 @@ export async function createStripeSessionFn({
   order.stripeSessionId = session.id;
   await order.save();
 
-  // const order = await Order.create({
-  //   customerId: customerId || null,
-  //   items: priced.items,
-  //   shippingAddress,
-  //   subtotal: priced.subtotal,
-  //   shipping,
-  //   total: priced.subtotal + shipping,
-  //   status: "new",
-  //   stripeSessionId: session.id,
-  //   events: ["created"],
-  // });
-
   return { url: session.url, orderId: order._id };
 }

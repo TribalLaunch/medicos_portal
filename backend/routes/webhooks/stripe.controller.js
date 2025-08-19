@@ -51,11 +51,6 @@ export async function stripeWebhook(req, res) {
       await order.save();
       console.log("[Stripe] Order marked paid:", order._id.toString());
     }
-
-    // Order.findOneAndUpdate(
-    //   { stripeSessionId: session.id },
-    //   { status: "paid", $push: { events: "paid" } }
-    // ).exec();
   }
   res.json({ received: true });
 }

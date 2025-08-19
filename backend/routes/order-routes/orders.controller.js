@@ -23,7 +23,7 @@ export async function getOrder(req, res, next) {
 
 export async function createOrder(req, res, next) {
   try {
-    res.json(await createOrderFn(req.body));
+    createOrderFn(req, res, next);
   } catch (e) {
     next(e);
   }
