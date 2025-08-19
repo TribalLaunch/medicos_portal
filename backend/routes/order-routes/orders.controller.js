@@ -2,6 +2,7 @@
 import { listOrdersFn } from "./functions/list_orders.js";
 import { getOrderFn } from "./functions/get_order.js";
 import { createOrderFn } from "./functions/create_order.js";
+import { createFulfillmentFn } from "./functions/create_fulfillment.js";
 
 export async function listOrders(req, res, next) {
   try {
@@ -24,6 +25,14 @@ export async function getOrder(req, res, next) {
 export async function createOrder(req, res, next) {
   try {
     createOrderFn(req, res, next);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function createFulfillment(req, res, next) {
+  try {
+    createFulfillmentFn(req, res, next);
   } catch (e) {
     next(e);
   }
