@@ -5,6 +5,8 @@ import {
   getOrder,
   createOrder,
   createFulfillment,
+  listFulfillments,
+  getFulfillment,
 } from "./orders.controller.js";
 import {
   requireCustomer,
@@ -22,5 +24,7 @@ r.get("/:id", requireCustomer, getOrder);
 r.post("/", requireSales, createOrder);
 
 r.post("/:orderId/fulfillment", requireAdmin, createFulfillment);
+r.get("/:orderId/fulfillment", requireAdmin, listFulfillments);
+r.get("/:orderId/fulfillment/:fulfillmentId", requireAdmin, getFulfillment);
 
 export default r;
