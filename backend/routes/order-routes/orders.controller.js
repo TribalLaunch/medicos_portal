@@ -5,6 +5,8 @@ import { createOrderFn } from "./functions/create_order.js";
 import { createFulfillmentFn } from "./functions/create_fulfillment.js";
 import { listFulfillmentsFn } from "./functions/list_fulfillment.js";
 import { getFulfillmentFn } from "./functions/get_fulfillment.js";
+import { updateFulfillmentFn } from "./functions/update_fulfillment.js";
+import { deleteFulfillmentFn } from "./functions/delete_fulfillment.js";
 
 export async function listOrders(req, res, next) {
   try {
@@ -51,6 +53,22 @@ export async function listFulfillments(req, res, next) {
 export async function getFulfillment(req, res, next) {
   try {
     getFulfillmentFn(req, res, next);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function updateFulfillment(req, res, next) {
+  try {
+    updateFulfillmentFn(req, res, next);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deleteFulfillment(req, res, next) {
+  try {
+    deleteFulfillmentFn(req, res, next);
   } catch (e) {
     next(e);
   }

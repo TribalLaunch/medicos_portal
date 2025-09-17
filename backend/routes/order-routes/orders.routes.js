@@ -7,6 +7,8 @@ import {
   createFulfillment,
   listFulfillments,
   getFulfillment,
+  updateFulfillment,
+  deleteFulfillment,
 } from "./orders.controller.js";
 import {
   requireCustomer,
@@ -26,5 +28,15 @@ r.post("/", requireSales, createOrder);
 r.post("/:orderId/fulfillment", requireAdmin, createFulfillment);
 r.get("/:orderId/fulfillment", requireAdmin, listFulfillments);
 r.get("/:orderId/fulfillment/:fulfillmentId", requireAdmin, getFulfillment);
+r.patch(
+  "/:orderId/fulfillment/:fulfillmentId",
+  requireAdmin,
+  updateFulfillment
+);
+r.delete(
+  "/:orderId/fulfillment/:fulfillmentId",
+  requireAdmin,
+  deleteFulfillment
+);
 
 export default r;
