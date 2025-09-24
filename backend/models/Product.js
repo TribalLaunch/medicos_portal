@@ -16,6 +16,21 @@ const ProductSchema = new Schema(
     manufacturer: String,
     name: String,
     category: String,
+    sub_category: {
+      type: String,
+      enum: [
+        "Bracing",
+        "Ear",
+        "Knee",
+        "Ankle",
+        "Shoulder",
+        "Elbow",
+        "Pregnancy",
+        "Face",
+        "Chest",
+        "Foot",
+      ],
+    },
     uom: String, //unit of measurement
     description: String,
     sizing: [{ type: String }],
@@ -27,5 +42,7 @@ const ProductSchema = new Schema(
   },
   { timestamps: true }
 );
+
+ProductSchema.index({ name: "text", description: "text", sku: "text" });
 
 export default mongoose.model("Product", ProductSchema);

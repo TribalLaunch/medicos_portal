@@ -4,8 +4,8 @@ import { getProductFn } from "./functions/get_product.js";
 
 export async function listProducts(req, res, next) {
   try {
-    const { q, category } = req.query;
-    res.json(await listProductsFn({ q, category }));
+    // const { q, category } = req.query;
+    res.json(await listProductsFn(req.query));
   } catch (e) {
     next(e);
   }
