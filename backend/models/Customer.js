@@ -27,4 +27,6 @@ const CustomerSchema = new Schema(
   { timestamps: true }
 );
 
+CustomerSchema.index({ customer_name: "text", customer_number: "text" });
+
 export default mongoose.model("Customer", CustomerSchema);
