@@ -11,6 +11,8 @@ import {
 import { addProductImageFn } from "./functions/add_product_image.js";
 import { removeProductImageFn } from "./functions/remove_product_image.js";
 import { listCustomersFn } from "./functions/list_customers.js";
+import { upsertPriceContractFn } from "./functions/upsert_price_contract.js";
+import { getPriceContractsFn } from "./functions/get_price_contracts.js";
 
 export async function upsertProduct(req, res, next) {
   try {
@@ -93,6 +95,22 @@ export async function removeProductImage(req, res, next) {
 export async function listCustomers(req, res, next) {
   try {
     res.json(await listCustomersFn(req, res));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function upsertPriceContract(req, res, next) {
+  try {
+    res.json(await upsertPriceContractFn(req, res));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getPriceContracts(req, res, next) {
+  try {
+    res.json(await getPriceContractsFn(req.query));
   } catch (e) {
     next(e);
   }

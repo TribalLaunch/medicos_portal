@@ -11,6 +11,8 @@ import {
   addProductImage,
   removeProductImage,
   listCustomers,
+  upsertPriceContract,
+  getPriceContracts,
 } from "./admin.controller.js";
 import { requireAdmin } from "../../middleware/auth.js";
 
@@ -25,4 +27,6 @@ r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
 r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
 r.post("/products/image", requireAdmin, addProductImage);
 r.delete("/products/image", requireAdmin, removeProductImage);
+r.get("/price-contracts", requireAdmin, getPriceContracts);
+r.post("/price-contracts", requireAdmin, upsertPriceContract);
 export default r;
