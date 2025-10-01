@@ -13,7 +13,7 @@ const CustomerSchema = new Schema(
       default: "Clinic",
     },
     salesRepId: { type: mongoose.Types.ObjectId, ref: "User", index: true }, // assigned Sales user
-    address: [
+    addresses: [
       {
         label: String,
         line1: String,
@@ -21,6 +21,8 @@ const CustomerSchema = new Schema(
         city: String,
         state: String,
         zip: String,
+        country: String,
+        isDefault: Boolean,
       },
     ],
   },

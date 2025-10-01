@@ -13,6 +13,9 @@ import {
   listCustomers,
   upsertPriceContract,
   getPriceContracts,
+  getCustomer,
+  addCustomerAddress,
+  deleteCustomerAddress,
 } from "./admin.controller.js";
 import { requireAdmin } from "../../middleware/auth.js";
 
@@ -23,6 +26,13 @@ r.patch("/orders/:id/status", requireAdmin, updateOrderStatus);
 r.post("/products/upload-url", requireAdmin, getProductUploadUrl);
 r.post("/users/sales", requireAdmin, createSalesUser);
 r.get("/customers", requireAdmin, listCustomers);
+r.get("/customers/:id", requireAdmin, getCustomer);
+r.post("/customers/:id/addresses", requireAdmin, addCustomerAddress);
+r.delete(
+  "/customers/:id/addresses/:addrId",
+  requireAdmin,
+  deleteCustomerAddress
+);
 r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
 r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
 r.post("/products/image", requireAdmin, addProductImage);

@@ -13,6 +13,9 @@ import { removeProductImageFn } from "./functions/remove_product_image.js";
 import { listCustomersFn } from "./functions/list_customers.js";
 import { upsertPriceContractFn } from "./functions/upsert_price_contract.js";
 import { getPriceContractsFn } from "./functions/get_price_contracts.js";
+import { getCustomerFn } from "./functions/get_customer.js";
+import { addCustomerAddressFn } from "./functions/add_customer_address.js";
+import { deleteCustomerAddressFn } from "./functions/delete_customer_address.js";
 
 export async function upsertProduct(req, res, next) {
   try {
@@ -111,6 +114,30 @@ export async function upsertPriceContract(req, res, next) {
 export async function getPriceContracts(req, res, next) {
   try {
     res.json(await getPriceContractsFn(req.query));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getCustomer(req, res, next) {
+  try {
+    res.json(await getCustomerFn(req.params));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function addCustomerAddress(req, res, next) {
+  try {
+    res.json(await addCustomerAddressFn(req.params, req.body));
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deleteCustomerAddress(req, res, next) {
+  try {
+    res.json(await deleteCustomerAddressFn(req.params));
   } catch (e) {
     next(e);
   }
