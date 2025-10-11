@@ -1,0 +1,27 @@
+// =============================================================
+// src/app/store.ts — Zustand for auth/ui
+// =============================================================
+import { create } from 'zustand'
+import type { SessionUser } from './types'
+
+
+type AuthState = {
+token: string | null
+user: SessionUser | null
+setAuth: (token: string, user: SessionUser) => void
+clearAuth: () => void
+}
+
+
+type UiState = { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }
+
+
+export const useAuthStore = create<AuthState>((set) => ({
+token: null,
+user: null,
+setAuth: (token, user) => set({ token, user }),
+clearAuth: () => set({ token: null, user: null }),
+}))
+
+
+export const useUiStore = create<UiState>((set) => ({ sidebarOpen: true, setSidebarOpen: (v) => set({ sidebarOpen: v }) }))

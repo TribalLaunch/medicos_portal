@@ -1,16 +1,20 @@
 @import "tailwindcss";
-/* @tailwindcss base;
-@tailwindcss components;
-@tailwindcss utilities; */
 
 :root {
-  color-scheme: light;
+/* Medicos brand */
+--brand-primary: #019FF3; /* Dark Blue */
+--brand-accent: #01F2EF; /* Light Blue */
+--brand-foreground: #ffffff; /* white */
 }
 
-body {
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-    Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji",
-    "Segoe UI Emoji";
-  background: #f8fafc;
-  color: #0f172a;
-}
+
+body { background:#f8fafc; color:#0f172a; }
+
+
+/***** Utility helpers for brand theming *****/
+.btn-primary { @apply inline-flex items-center justify-center rounded-xl px-3 py-2 font-semibold; background:var(--brand-primary); color:var(--brand-foreground); }
+.btn-primary:hover { filter: brightness(0.95); }
+.btn-outline { @apply inline-flex items-center justify-center rounded-xl px-3 py-2 font-medium border; border-color: color-mix(in oklab, var(--brand-primary) 50%, #94a3b8); color: var(--brand-primary); }
+.card { @apply rounded-2xl border bg-white p-4 shadow-sm; }
+.input { @apply w-full rounded-xl border px-3 py-2; }
+.badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-sky-50 text-sky-700; }
