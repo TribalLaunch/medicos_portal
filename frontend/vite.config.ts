@@ -8,15 +8,12 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    proxy: {
+      // everything under /api goes to your local backend
+      '/api': {
+        target: 'http://localhost:5000', // <— your backend dev port
+        changeOrigin: true,
+      }
+    }
   },
 });
-
-
-// import { defineConfig } from 'vite';
-// import react from '@vitejs/plugin-react';
-// // If you plan to import SVGs as React components, also add vite-plugin-svgr
-// // import svgr from 'vite-plugin-svgr'
-
-// export default defineConfig({
-//   plugins: [react()],
-// });

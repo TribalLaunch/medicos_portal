@@ -7,7 +7,7 @@ import * as auth from '../services/auth.services'
 import { useAuthStore } from '../app/store'
 import type { SessionUser } from '../app/types'
 import { LoginSchema, type LoginDto } from '../lib/validators/auth'
-
+import { api } from '../lib/axios'
 
 export function useHydrateUser() {
 const setAuth = useAuthStore((s) => s.setAuth)
@@ -26,6 +26,7 @@ mutationFn: async (dto: LoginDto) => {
 const parsed = LoginSchema.parse(dto)
 const { token } = await auth.login(parsed)
 sessionStorage.setItem('medicos_token', token)
+api.defaults.headers.Authorization = `Bearer ${token}`
 const u = await auth.me()
 setAuth(token, u as SessionUser)
 return u
