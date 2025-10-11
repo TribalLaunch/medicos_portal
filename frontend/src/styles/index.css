@@ -1,0 +1,16 @@
+@import "tailwindcss";
+/* @tailwindcss base;
+@tailwindcss components;
+@tailwindcss utilities; */
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  background: #f8fafc;
+  color: #0f172a;
+}
