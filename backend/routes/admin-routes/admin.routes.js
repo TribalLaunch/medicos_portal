@@ -17,7 +17,7 @@ import {
   addCustomerAddress,
   deleteCustomerAddress,
 } from "./admin.controller.js";
-import { requireAdmin } from "../../middleware/auth.js";
+import { requireAdmin, requireSales } from "../../middleware/auth.js";
 
 const r = Router();
 r.post("/products", requireAdmin, upsertProduct);
@@ -25,8 +25,8 @@ r.get("/orders", requireAdmin, listOrdersAdmin);
 r.patch("/orders/:id/status", requireAdmin, updateOrderStatus);
 r.post("/products/upload-url", requireAdmin, getProductUploadUrl);
 r.post("/users/sales", requireAdmin, createSalesUser);
-r.get("/customers", requireAdmin, listCustomers);
-r.get("/customers/:id", requireAdmin, getCustomer);
+r.get("/customers", requireSales, listCustomers);
+r.get("/customers/:id", requireSales, getCustomer);
 r.post("/customers/:id/addresses", requireAdmin, addCustomerAddress);
 r.delete(
   "/customers/:id/addresses/:addrId",
@@ -35,7 +35,7 @@ r.delete(
 );
 r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
 r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
-r.post("/products/image", requireAdmin, addProductImage);
+// r.post("/products/image", requireAdmin, addProductImage);
 r.delete("/products/image", requireAdmin, removeProductImage);
 r.get("/price-contracts", requireAdmin, getPriceContracts);
 r.post("/price-contracts", requireAdmin, upsertPriceContract);
