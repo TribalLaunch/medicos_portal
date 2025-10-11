@@ -6,6 +6,6 @@ export const LoginSchema = z.object({ email: z.string().email(), password: z.str
 
 export type LoginDto = z.infer<typeof LoginSchema>
 
-export const RegisterSchema = z.object({ name: z.string().min(2), email: z.string().email(), password: z.string().min(6) })
+export const RegisterSchema = z.object({ name: z.string().min(2), email: z.string().email(), password: z.string().min(6), customer_name:z.string().min(2) })
 
 export type RegisterDto = z.infer<typeof RegisterSchema>
