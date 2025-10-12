@@ -8,8 +8,8 @@ import type { Product } from '../lib/validators/product'
 export function listProducts(params: Record<string, any>) {
 return getList<Product>('/products', params)
 }
-export function getProduct(id: string) {
-return getItem<Product>(`/products/${id}`)
+export function getProduct(sku: string) {
+return getItem<Product>(`/products/${sku}`)
 }
 
 
