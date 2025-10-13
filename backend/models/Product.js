@@ -34,6 +34,7 @@ const ProductSchema = new Schema(
     uom: String, //unit of measurement
     description: String,
     sizing: [{ type: String }],
+    sizing_description: String,
     priceMSRP: Number,
     images: [ImageSchema],
     primaryImageIndex: { type: Number, default: 0 },
