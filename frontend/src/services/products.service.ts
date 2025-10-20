@@ -2,7 +2,7 @@
 // src/services/products.service.ts
 // =============================================================
 import { getList, getItem, postJSON, patchJSON, del } from '../lib/fetcher'
-import type { Product } from '../lib/validators/product'
+import type { Product, ProductImage } from '../lib/validators/product'
 
 
 export function listProducts(params: Record<string, any>) {
@@ -26,6 +26,22 @@ return patchJSON<{ data: Product }>(`/admin/products/${id}`, payload)
 export function deleteProduct(id: string) {
 return del(`/admin/products/${id}`)
 }
-export function getUploadUrls(count: number) {
-return postJSON<{ urls: string[] }>(`/admin/products/upload-urls`, { count })
+// If your backend resolves :id param by either ObjectId OR SKU, this works.
+// If it’s specifically SKU-only, this still works; just pass the sku.
+export function getProductBySku(sku: string) {
+  return getItem<Product>(`/products/${encodeURIComponent(sku)}`)
+}
+
+/** Request a single presigned upload URL */
+export function getUploadUrl(input: { sku: string; fileName: string; contentType: string }) {
+  // returns { uploadUrl, publicUrl, key }
+  return postJSON<{ uploadUrl: string; publicUrl: string; key: string }>(
+    `/admin/products/upload-url`,
+    input
+  )
+}
+
+/** Optional: delete one image */
+export function deleteProductImage(body: { productId: string; key: string; deleteFromS3?: boolean }) {
+  return postJSON(`/admin/products/image`, body)
 }

@@ -28,7 +28,7 @@ export default function AppRoutes(){
       <Route element={<PublicShell/>}>
         <Route index element={<Home/>} />
         <Route path="/products" element={<ProductsList/>} />
-        <Route path="/products/:id" element={<ProductDetail/>} />
+        <Route path="/products/:sku" element={<ProductDetail/>} />
         <Route path="/checkout" element={<div className="card">Checkout (Phase 3)</div>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
