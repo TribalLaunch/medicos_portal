@@ -16,6 +16,7 @@ const ResetPassword = lazy(()=>import('../pages/auth/ResetPassword'))
 const Register = lazy(()=>import('../pages/auth/Register'))
 const ProductsList = lazy(()=>import('../pages/products/ProductList'))
 const ProductDetail = lazy(()=>import('../pages/products/ProductDetail'))
+const ImageDebug = lazy(()=>import('../pages/debug/ImageDebug'));
 
 // Authenticated pages
 const Dashboard = lazy(()=>import('../pages/dashboard/Dashboard'))
@@ -34,6 +35,7 @@ export default function AppRoutes(){
         <Route path="/register" element={<Register/>} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/reset-password" element={<ResetPassword/>} />
+        <Route path="/debug/images" element={<ImageDebug/>} />
       </Route>
 
       {/* AUTH-ONLY */}
