@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProduct, getProductBySku } from '../../services/products.service';
 import { useParams, Link } from 'react-router-dom';
 import type { Product } from '../../lib/validators/product';
+import { resolveProductImage, DEFAULT_PRODUCT_IMG } from '../../lib/images';
 import { useAuthStore } from '../../app/store';
 import { useState } from 'react';
 
@@ -26,6 +27,8 @@ export default function ProductDetail() {
   const primary = Number.isInteger(data.primaryImageIndex) ? data.primaryImageIndex : 0;
   const currentIndex = data.images?.[activeIndex] ? activeIndex : primary;
   const mainSrc = data.images?.[currentIndex]?.url;
+  console.log('main: ', mainSrc)
+  // const imgSrc = resolveProductImage('hold');
   const price = Number(data.priceMSRP);
   const contractPrice =
     data.contractPrice !== undefined ? Number(data.contractPrice) : undefined;
@@ -36,7 +39,7 @@ export default function ProductDetail() {
       <div className="space-y-3">
         <div className="rounded-2xl border bg-white overflow-hidden min-h-[20rem] grid place-items-center">
           {mainSrc ? (
-            <img src={mainSrc} alt={data.images?.[currentIndex]?.alt || data.name} className="w-full h-full object-cover" />
+            <img src={DEFAULT_PRODUCT_IMG} alt={data.images?.[currentIndex]?.alt || data.name} className="w-full h-full object-cover" />
           ) : (
             <div className="h-80 grid place-items-center text-gray-400">No image</div>
           )}
