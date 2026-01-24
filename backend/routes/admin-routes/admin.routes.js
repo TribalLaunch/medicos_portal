@@ -35,7 +35,7 @@ r.delete(
 );
 r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
 r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
-r.post("/products/image", requireAdmin, addProductImage);
+r.post("/products/:productId/image", requireAdmin, addProductImage);
 r.delete("/products/image", requireAdmin, removeProductImage);
 r.get("/price-contracts", requireAdmin, getPriceContracts);
 r.post("/price-contracts", requireAdmin, upsertPriceContract);
