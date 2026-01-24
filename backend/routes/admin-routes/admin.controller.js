@@ -80,7 +80,8 @@ export async function unassignSalesFromCustomer(req, res, next) {
 export async function addProductImage(req, res, next) {
   try {
     const { sku, image, makePrimary } = req.body; // image = { key, url, alt }
-    res.json(await addProductImageFn({ sku, image, makePrimary }));
+    // res.json(await addProductImageFn({ sku, image, makePrimary }));
+    res.json(await addProductImageFn(req, res, next));
   } catch (e) {
     next(e);
   }
