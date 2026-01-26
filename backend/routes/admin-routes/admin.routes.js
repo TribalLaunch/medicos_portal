@@ -16,6 +16,7 @@ import {
   getCustomer,
   addCustomerAddress,
   deleteCustomerAddress,
+  reorderProductImages,
 } from "./admin.controller.js";
 import { requireAdmin, requireSales } from "../../middleware/auth.js";
 
@@ -31,11 +32,16 @@ r.post("/customers/:id/addresses", requireAdmin, addCustomerAddress);
 r.delete(
   "/customers/:id/addresses/:addrId",
   requireAdmin,
-  deleteCustomerAddress
+  deleteCustomerAddress,
 );
 r.post("/customers/assign-sales", requireAdmin, assignSalesToCustomer);
 r.post("/customers/unassign-sales", requireAdmin, unassignSalesFromCustomer);
 r.post("/products/:productId/image", requireAdmin, addProductImage);
+r.put(
+  "/products/:productId/images/reorder",
+  requireAdmin,
+  reorderProductImages,
+);
 r.delete("/products/image", requireAdmin, removeProductImage);
 r.get("/price-contracts", requireAdmin, getPriceContracts);
 r.post("/price-contracts", requireAdmin, upsertPriceContract);

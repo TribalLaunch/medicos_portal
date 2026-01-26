@@ -16,6 +16,7 @@ import { getPriceContractsFn } from "./functions/get_price_contracts.js";
 import { getCustomerFn } from "./functions/get_customer.js";
 import { addCustomerAddressFn } from "./functions/add_customer_address.js";
 import { deleteCustomerAddressFn } from "./functions/delete_customer_address.js";
+import { reorderProductImagesFn } from "./functions/reorder_product_images.js";
 
 export async function upsertProduct(req, res, next) {
   try {
@@ -79,7 +80,7 @@ export async function unassignSalesFromCustomer(req, res, next) {
 
 export async function addProductImage(req, res, next) {
   try {
-    const { sku, image, makePrimary } = req.body; // image = { key, url, alt }
+    // const { sku, image, makePrimary } = req.body; // image = { key, url, alt }
     // res.json(await addProductImageFn({ sku, image, makePrimary }));
     res.json(await addProductImageFn(req, res, next));
   } catch (e) {
@@ -141,5 +142,17 @@ export async function deleteCustomerAddress(req, res, next) {
     res.json(await deleteCustomerAddressFn(req.params));
   } catch (e) {
     next(e);
+  }
+}
+
+export async function reorderProductImages(req, res, next) {
+  try {
+    const { status, body } = await reorderProductImagesFn({
+      params: req.params,
+      body: req.body,
+    });
+    return res.status(status).json(body);
+  } catch (err) {
+    return next(err);
   }
 }
