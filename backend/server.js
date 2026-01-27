@@ -20,6 +20,7 @@ import orderRoutes from "./routes/order-routes/orders.routes.js";
 import adminRoutes from "./routes/admin-routes/admin.routes.js";
 import stripeWebhookRoutes from "./routes/webhooks/stripe.routes.js";
 import salesRoutes from "./routes/sales-routes/sales.routes.js";
+import customerRoutes from "./routes/customer-routes/customer.routes.js";
 
 const app = express();
 
@@ -44,7 +45,7 @@ app.use(
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 // --- Common middleware ---
@@ -59,6 +60,7 @@ app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/sales", salesRoutes);
+app.use("/api/customers", customerRoutes);
 
 // Mount the webhook router AFTER raw-body middleware registration above
 // stripe.routes.js defines r.post('/stripe', stripeWebhook)
