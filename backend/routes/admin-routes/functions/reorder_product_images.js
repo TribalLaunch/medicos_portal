@@ -98,7 +98,8 @@ export async function reorderProductImagesFn({ params, body }) {
   const newPrimaryIndex = product.images.findIndex(
     (img) => img.key === currentPrimaryKey,
   );
-  product.primaryImageIndex = newPrimaryIndex >= 0 ? newPrimaryIndex : 0;
+  //   product.primaryImageIndex = newPrimaryIndex >= 0 ? newPrimaryIndex : 0;
+  product.primaryImageIndex = 0;
 
   await product.save();
 

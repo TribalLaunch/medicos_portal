@@ -17,6 +17,7 @@ const Register = lazy(()=>import('../pages/auth/Register'))
 const ProductsList = lazy(()=>import('../pages/products/ProductList'))
 const ProductDetail = lazy(()=>import('../pages/products/ProductDetail'))
 const ImageDebug = lazy(()=>import('../pages/debug/ImageDebug'));
+const Checkout = lazy(() => import("../pages/checkout/Checkout"))
 
 // Authenticated pages
 const Dashboard = lazy(()=>import('../pages/dashboard/Dashboard'))
@@ -30,12 +31,12 @@ export default function AppRoutes(){
         <Route index element={<Home/>} />
         <Route path="/products" element={<ProductsList/>} />
         <Route path="/products/:sku" element={<ProductDetail/>} />
-        <Route path="/checkout" element={<div className="card">Checkout (Phase 3)</div>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/reset-password" element={<ResetPassword/>} />
         <Route path="/debug/images" element={<ImageDebug/>} />
+        <Route path="/checkout" element={<Checkout/>} />
       </Route>
 
       {/* AUTH-ONLY */}

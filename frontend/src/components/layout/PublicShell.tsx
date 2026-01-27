@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../app/store'
 import { useLogout } from '../../hooks/useAuth'
+import CartBadge from '../cart/CartBadge'
 
 export default function PublicShell(){
   const { user } = useAuthStore()
@@ -33,11 +34,13 @@ export default function PublicShell(){
           <div className="ml-auto flex gap-2">
             {user ? (
               <>
+              <CartBadge />
                 <Link to="/dashboard" className="btn-outline">Dashboard</Link>
                 <button onClick={logout} className="btn-outline">Sign out</button>
               </>
             ) : (
               <>
+              <CartBadge />
                 <Link to="/login" className="btn-outline">Sign in</Link>
                 <Link to="/register" className="btn-primary">Register</Link>
               </>
