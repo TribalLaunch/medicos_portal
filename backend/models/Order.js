@@ -8,7 +8,7 @@ const OrderItemSchema = new Schema(
     qty: Number,
     unitPrice: Number,
   },
-  { _id: false }
+  { _id: false },
 );
 
 const AddressSchema = new Schema(
@@ -20,7 +20,7 @@ const AddressSchema = new Schema(
     state: String,
     zip: String,
   },
-  { _id: false }
+  { _id: false },
 );
 
 const FulfillmentSchema = new mongoose.Schema(
@@ -59,7 +59,7 @@ const FulfillmentSchema = new mongoose.Schema(
     deliveredAt: Date,
     events: [{ at: Date, code: String, description: String, location: String }],
   },
-  { _id: true, timestamps: true }
+  { _id: true, timestamps: true },
 );
 
 const OrderSchema = new Schema({
@@ -89,6 +89,10 @@ const OrderSchema = new Schema({
     type: String,
     enum: ["backoffice", "website"],
     default: "website",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

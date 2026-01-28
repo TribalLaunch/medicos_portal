@@ -1,10 +1,10 @@
-import { getItem } from "../lib/fetcher";
+import { getItem, getJSON } from "../lib/fetcher";
 
 export type OrderLineItem = {
   sku: string;
   name: string;
   qty: number;
-  price: number;
+  unitPrice: number;
   size?: string;
 };
 
@@ -19,12 +19,17 @@ export type Order = {
 
   items: OrderLineItem[];
 
-  totals?: {
-    subtotal?: number;
-    shipping?: number;
-    tax?: number;
-    total?: number;
-  };
+  subtotal?: number;
+  shipping?: number;
+  tax?: number;
+  total?: number;
+
+//   totals?: {
+//     subtotal?: number;
+//     shipping?: number;
+//     tax?: number;
+//     total?: number;
+//   };
 };
 
 export type PagedResponse<T> = {
@@ -43,7 +48,7 @@ export function listMyOrders(params?: {
   if (params?.page) p.set("page", String(params.page));
   if (params?.pageSize) p.set("pageSize", String(params.pageSize));
   const qs = p.toString() ? `?${p.toString()}` : "";
-  return getItem<PagedResponse<Order>>(`/orders${qs}`);
+  return getItem<Order[]>(`/orders${qs}`);
 }
 
 export function listAdminOrders(params?: {
@@ -58,7 +63,7 @@ export function listAdminOrders(params?: {
   if (params?.status) p.set("status", params.status);
   if (params?.q) p.set("q", params.q);
   const qs = p.toString() ? `?${p.toString()}` : "";
-  return getItem<PagedResponse<Order>>(`/admin/orders${qs}`);
+  return getItem<Order[]>(`/admin/orders${qs}`);
 }
 
 export function getOrderById(id: string) {

@@ -14,7 +14,7 @@ export default function AdminOrders() {
   if (isLoading) return <div className="card">Loading orders…</div>;
   if (error) return <div className="card text-red-700">Failed to load orders.</div>;
 
-  const orders = data?.data || [];
+  const orders = Array.isArray(data) ? data : [];
 
   return (
     <div className="space-y-4">

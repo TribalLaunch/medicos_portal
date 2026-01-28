@@ -56,8 +56,8 @@ export default function OrderDetail() {
                 <div className="text-xs text-gray-500">Qty {it.qty}</div>
               </div>
               <div className="text-right">
-                <div className="font-semibold">{fmtMoney((it.price || 0) * (it.qty || 0))}</div>
-                <div className="text-xs text-gray-500">{fmtMoney(it.price)} ea</div>
+                <div className="font-semibold">{fmtMoney((it.unitPrice || 0) * (it.qty || 0))}</div>
+                <div className="text-xs text-gray-500">{fmtMoney(it.unitPrice)} ea</div>
               </div>
             </div>
           ))}
@@ -65,32 +65,32 @@ export default function OrderDetail() {
       </div>
 
       {/* Totals (if present) */}
-      {order.totals ? (
+      {order ? (
         <div className="card space-y-2">
           <div className="font-semibold">Summary</div>
 
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Subtotal</span>
-            <span>{fmtMoney(order.totals.subtotal)}</span>
+            <span>{fmtMoney(order.subtotal)}</span>
           </div>
 
-          {"shipping" in order.totals ? (
+          {"shipping" in order ? (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Shipping</span>
-              <span>{fmtMoney(order.totals.shipping)}</span>
+              <span>{fmtMoney(order.shipping)}</span>
             </div>
           ) : null}
 
-          {"tax" in order.totals ? (
+          {"tax" in order ? (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Tax</span>
-              <span>{fmtMoney(order.totals.tax)}</span>
+              <span>{fmtMoney(order.tax)}</span>
             </div>
           ) : null}
 
           <div className="flex justify-between text-base font-semibold pt-2 border-t">
             <span>Total</span>
-            <span>{fmtMoney(order.totals.total ?? order.totals.subtotal)}</span>
+            <span>{fmtMoney(order.total ?? order.subtotal)}</span>
           </div>
         </div>
       ) : null}

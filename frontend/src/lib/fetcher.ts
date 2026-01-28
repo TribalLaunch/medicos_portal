@@ -1,5 +1,9 @@
 import { api } from './axios';
 
+function extractErrorMessage(err: any) {
+  return err?.response?.data?.message || err?.message || "Request failed";
+}
+
 export type ListResponse<T> = {
   data: T[];
   total: number;
@@ -23,6 +27,11 @@ export async function getItem<T>(url: string): Promise<T> {
   const payload = data?.body ?? data;
   // server item shape is either { data: T } or directly T
   return (payload?.data ?? payload) as T;
+}
+
+export async function getJSON<T>(url: string): Promise<T> {
+  const res = await api.get(url);
+  return res.data as T; // no unwrapping
 }
 
 export async function postJSON<T = any>(

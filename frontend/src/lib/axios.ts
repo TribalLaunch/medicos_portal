@@ -11,6 +11,7 @@ export const apiBase =
 export const api = axios.create({
   baseURL: apiBase,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true
 })
 
 // Attach token from store OR sessionStorage (handles first call after login)
