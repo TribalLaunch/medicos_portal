@@ -18,7 +18,7 @@ export type CreateStripeSessionPayload = {
 
 export type CreateStripeSessionResponse = {
   url: string; // Stripe checkout session URL
-  sessionId?: string;
+  orderId: string;
 };
 
 export async function createStripeSession(args: {

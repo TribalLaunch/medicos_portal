@@ -7,6 +7,8 @@ export default function CheckoutSuccess() {
   const clearCart = useCartStore((s) => s.clearCart);
   const resetCheckout = useCheckoutStore((s) => s.resetCheckout);
 
+  const orderId = sessionStorage.getItem("lastOrderId");
+
   const [params] = useSearchParams();
   const sessionId = params.get("session_id") || params.get("sessionId");
 
@@ -25,7 +27,7 @@ export default function CheckoutSuccess() {
 
       {sessionId ? (
         <p className="text-xs text-gray-500 break-all">
-          Stripe Session: <span className="font-mono">{sessionId}</span>
+          Order ID: <span className="font-mono">{orderId}</span>
         </p>
       ) : null}
 

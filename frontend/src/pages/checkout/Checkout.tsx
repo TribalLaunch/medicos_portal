@@ -89,34 +89,26 @@ const phone = useCheckoutStore((s) => s.phone);
   disabled={!!validationError || isSubmitting}
   onClick={async () => {
     try {
-      setIsSubmitting(true);
+    setIsSubmitting(true);
 
-      const resp: any = await createStripeSession({
-        email,
-        phone,
-        shippingAddress: shipping,
-        cartItems: items,
-      });
+    const { url, orderId } = await createStripeSession({
+      email,
+      phone,
+      shippingAddress: shipping,
+      cartItems: items,
+    });
 
-      // Handle both response shapes:
-      const url =
-        resp?.url ||
-        resp?.data?.url ||
-        resp?.data?.data?.url ||
-        resp?.data?.data ||
-        resp?.data;
+    // Optional: store orderId so success page can show it or use it later
+    sessionStorage.setItem("lastOrderId", orderId);
 
-      if (!url || typeof url !== "string") {
-        throw new Error("Stripe session URL was not returned from the backend.");
-      }
-
-      window.location.href = url;
-    } catch (e: any) {
-      alert(e?.message || "Failed to start checkout. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    window.location.href = url;
+  } catch (e: any) {
+    alert(e?.message || "Failed to start checkout. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
   }}
+
   type="button"
 >
   {isSubmitting ? "Redirecting…" : "Continue to payment"}
