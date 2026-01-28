@@ -47,6 +47,13 @@ export async function del(url: string, config?: Record<string, any>): Promise<vo
   await api.delete(url, config);
 }
 
+export async function postItem<T, B = unknown>(
+  url: string,
+  body: B
+): Promise<T> {
+  const res = await api.post(url, body);
+  return res.data?.data ?? res.data;
+}
 
 
 

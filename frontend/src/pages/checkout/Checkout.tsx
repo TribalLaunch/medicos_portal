@@ -1,6 +1,6 @@
-
-
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { createStripeSession } from "../../services/checkout.service";
 import CartLineItem from "../../components/cart/CartLineItem";
 import { useCartStore } from "../../store/cart.store";
 import CheckoutContactForm from "../../components/checkout/CheckoutContactForm";
@@ -24,6 +24,10 @@ export default function Checkout() {
   const email = useCheckoutStore((s) => s.email);
   const shipping = useCheckoutStore((s) => s.shipping);
   const resetCheckout = useCheckoutStore((s) => s.resetCheckout);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+const phone = useCheckoutStore((s) => s.phone);
+
 
   const validationError = validateCheckout(email, shipping);
 
@@ -80,9 +84,47 @@ export default function Checkout() {
               <div className="text-sm text-green-700">Checkout details look good.</div>
             )}
 
-            <button className="btn-primary w-full" disabled>
+            <button
+  className="btn-primary w-full"
+  disabled={!!validationError || isSubmitting}
+  onClick={async () => {
+    try {
+      setIsSubmitting(true);
+
+      const resp: any = await createStripeSession({
+        email,
+        phone,
+        shippingAddress: shipping,
+        cartItems: items,
+      });
+
+      // Handle both response shapes:
+      const url =
+        resp?.url ||
+        resp?.data?.url ||
+        resp?.data?.data?.url ||
+        resp?.data?.data ||
+        resp?.data;
+
+      if (!url || typeof url !== "string") {
+        throw new Error("Stripe session URL was not returned from the backend.");
+      }
+
+      window.location.href = url;
+    } catch (e: any) {
+      alert(e?.message || "Failed to start checkout. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }}
+  type="button"
+>
+  {isSubmitting ? "Redirecting…" : "Continue to payment"}
+</button>
+
+            {/* <button className="btn-primary w-full" disabled>
               Continue to payment (Phase 3.3)
-            </button>
+            </button> */}
 
             <p className="text-xs text-gray-500">
               Stripe payment will be enabled in Phase 3.3.

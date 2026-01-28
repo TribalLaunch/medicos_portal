@@ -18,6 +18,8 @@ const ProductsList = lazy(()=>import('../pages/products/ProductList'))
 const ProductDetail = lazy(()=>import('../pages/products/ProductDetail'))
 const ImageDebug = lazy(()=>import('../pages/debug/ImageDebug'));
 const Checkout = lazy(() => import("../pages/checkout/Checkout"))
+const CheckoutSuccess = lazy(() => import("../pages/checkout/CheckoutSuccess"));
+const CheckoutCancel = lazy(() => import("../pages/checkout/checkoutCancel"));
 
 // Authenticated pages
 const Dashboard = lazy(()=>import('../pages/dashboard/Dashboard'))
@@ -37,6 +39,8 @@ export default function AppRoutes(){
         <Route path="/reset-password" element={<ResetPassword/>} />
         <Route path="/debug/images" element={<ImageDebug/>} />
         <Route path="/checkout" element={<Checkout/>} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
+<Route path="/checkout/cancel" element={<CheckoutCancel />} />
       </Route>
 
       {/* AUTH-ONLY */}
