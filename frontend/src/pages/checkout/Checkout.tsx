@@ -7,6 +7,7 @@ import CheckoutContactForm from "../../components/checkout/CheckoutContactForm";
 import CheckoutShippingForm from "../../components/checkout/CheckoutShippingForm";
 import CheckoutAddressPicker from "../../components/checkout/CheckoutAddressPicker";
 import { useCheckoutStore } from "../../store/checkout.store";
+import { useAuthStore } from "../../app/store";
 
 function validateCheckout(email: string, shipping: any) {
   if (!email) return "Email is required.";
@@ -26,7 +27,10 @@ export default function Checkout() {
   const resetCheckout = useCheckoutStore((s) => s.resetCheckout);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-const phone = useCheckoutStore((s) => s.phone);
+
+  const phone = useCheckoutStore((s) => s.phone);
+
+  const { user } = useAuthStore();
 
 
   const validationError = validateCheckout(email, shipping);
@@ -92,6 +96,7 @@ const phone = useCheckoutStore((s) => s.phone);
     setIsSubmitting(true);
 
     const { url, orderId } = await createStripeSession({
+      customerId: user?.customerId,
       email,
       phone,
       shippingAddress: shipping,

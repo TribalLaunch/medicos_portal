@@ -25,11 +25,16 @@ export default function CheckoutSuccess() {
         Thanks — your order has been submitted.
       </p>
 
-      {sessionId ? (
+      {orderId ? (
+  <Link to={`/orders/${orderId}`} className="btn-primary">
+    View Order
+  </Link>
+) : null}
+      {/* {orderId ? (
         <p className="text-xs text-gray-500 break-all">
           Order ID: <span className="font-mono">{orderId}</span>
         </p>
-      ) : null}
+      ) : null} */}
 
       <div className="flex gap-2">
         <Link to="/products" className="btn-primary">Continue shopping</Link>

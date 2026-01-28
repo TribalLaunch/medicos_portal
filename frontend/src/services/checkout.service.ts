@@ -3,6 +3,7 @@ import type { CartItem } from "../store/cart.store";
 import type { ShippingAddress } from "../store/checkout.store";
 
 export type CreateStripeSessionPayload = {
+  customerId?: string;
   email: string;
   phone?: string;
   shippingAddress: ShippingAddress;
@@ -22,12 +23,14 @@ export type CreateStripeSessionResponse = {
 };
 
 export async function createStripeSession(args: {
+  customerId?: string;
   email: string;
   phone?: string;
   shippingAddress: ShippingAddress;
   cartItems: CartItem[];
 }) {
   const payload: CreateStripeSessionPayload = {
+    customerId: args.customerId,
     email: args.email,
     phone: args.phone,
     shippingAddress: args.shippingAddress,

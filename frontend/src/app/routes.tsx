@@ -20,10 +20,13 @@ const ImageDebug = lazy(()=>import('../pages/debug/ImageDebug'));
 const Checkout = lazy(() => import("../pages/checkout/Checkout"))
 const CheckoutSuccess = lazy(() => import("../pages/checkout/CheckoutSuccess"));
 const CheckoutCancel = lazy(() => import("../pages/checkout/checkoutCancel"));
+const MyOrders = lazy(() => import("../pages/orders/MyOrders"));
+const OrderDetail = lazy(() => import("../pages/orders/OrderDetail"));
 
 // Authenticated pages
 const Dashboard = lazy(()=>import('../pages/dashboard/Dashboard'))
 const AdminProducts = lazy(()=>import('../pages/admin/AdminProducts'))
+const AdminOrders = lazy(() => import("../pages/admin/AdminOrders"));
 
 export default function AppRoutes(){
   return (
@@ -40,7 +43,9 @@ export default function AppRoutes(){
         <Route path="/debug/images" element={<ImageDebug/>} />
         <Route path="/checkout" element={<Checkout/>} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
-<Route path="/checkout/cancel" element={<CheckoutCancel />} />
+        <Route path="/checkout/cancel" element={<CheckoutCancel />} />
+        <Route path="/orders" element={<MyOrders />} />
+        <Route path="/orders/:id" element={<OrderDetail />} />
       </Route>
 
       {/* AUTH-ONLY */}
@@ -52,6 +57,7 @@ export default function AppRoutes(){
         <Route path="/admin" element={<div className="card">Admin Home (Phase 5)</div>} />
         <Route path="/admin/price-contracts" element={<div className="card">Price Contracts (Phase 5)</div>} />
         <Route path="/reports" element={<div className="card">Reports (Phase 6)</div>} />
+        <Route path="/admin/orders" element={<RouteGuard role="admin"><AdminOrders/></RouteGuard>} />
       </Route>
 
       <Route path="/unauthorized" element={<Unauthorized/>} />
