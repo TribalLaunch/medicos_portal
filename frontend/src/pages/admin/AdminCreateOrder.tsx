@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -26,11 +26,21 @@ export default function AdminCreateOrder() {
   const [skuInput, setSkuInput] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
 
+  useEffect(() => {
+  setSelectedCustomerId("");
+}, [customerQ]);
+
   // Customers (admin)
-  const { data: customers } = useQuery({
-    queryKey: ["admin-customers", customerQ],
-    queryFn: () => searchAdminCustomers({ q: customerQ, page: 1, pageSize: 20 }),
-  });
+  const { data: customers, isFetching: customersFetching } = useQuery({
+  queryKey: ["admin-customers", customerQ],
+  queryFn: async () =>
+    await searchAdminCustomers({
+      q: customerQ.trim() || undefined,
+      page: 1,
+      pageSize: 50,
+    }),
+  staleTime: 30_000,
+});
 
   // Product search by SKU input (lightweight)
   const { data: productHits, isFetching: productsFetching } = useQuery({
@@ -63,13 +73,25 @@ export default function AdminCreateOrder() {
 
   const mutation = useMutation({
     mutationFn: async () => {
+        console.log("SUBMITTED: ", {
+            customerId: selectedCustomerId,
+        orderType,
+        poNumber: orderType === "po" ? poNumber.trim() : undefined,
+        items: lines.map((l) => ({
+          sku: l.sku,
+          customer_name: l.name,
+          qty: l.qty,
+          size: l.size,
+          price: l.price,
+        })),
+        })
       return createAdminOrder({
         customerId: selectedCustomerId,
         orderType,
         poNumber: orderType === "po" ? poNumber.trim() : undefined,
         items: lines.map((l) => ({
           sku: l.sku,
-          name: l.name,
+          customer_name: l.name,
           qty: l.qty,
           size: l.size,
           price: l.price,
@@ -102,6 +124,51 @@ export default function AdminCreateOrder() {
         />
 
         <select
+  className="input w-full"
+  value={selectedCustomerId}
+  onChange={(e) => setSelectedCustomerId(e.target.value)}
+>
+  <option value="">
+    {customersFetching ? "Loading customers…" : "Select customer"}
+  </option>
+
+  {(customers || []).map((c) => (
+    <option key={c._id} value={c._id}>
+      {c.customer_name}
+      {c.customer_number ? ` — ${c.customer_number}` : ""}
+    </option>
+  ))}
+</select>
+
+{!customersFetching && (customers || []).length === 0 ? (
+  <div className="text-sm text-gray-500 mt-1">
+    No customers match “{customerQ}”.
+  </div>
+) : null}
+
+        {/* <select
+            className="input w-full"
+            value={selectedCustomerId}
+            onChange={(e) => setSelectedCustomerId(e.target.value)}
+            disabled={customerQ.trim().length < 2}
+            >
+            {customerQ.trim().length < 2 ? (
+                <option value="">Type at least 2 characters to search…</option>
+            ) : (
+                <option value="">
+                {customersFetching ? "Searching customers…" : "Select customer"}
+                </option>
+            )}
+
+            {(customers || []).map((c) => (
+                <option key={c._id} value={c._id}>
+                {c.name}
+                {c.customer_number ? ` — #${c.customer_number}` : ""}
+                </option>
+            ))}
+        </select> */}
+
+        {/* <select
           className="input w-full"
           value={selectedCustomerId}
           onChange={(e) => setSelectedCustomerId(e.target.value)}
@@ -112,7 +179,7 @@ export default function AdminCreateOrder() {
               {c.name} {c.email ? `— ${c.email}` : ""}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
 
       {/* Order type */}

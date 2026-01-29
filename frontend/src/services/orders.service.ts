@@ -96,7 +96,7 @@ export type CreateManualOrderResponse = {
 
 export function createAdminOrder(payload: CreateManualOrderPayload) {
   return postItem<CreateManualOrderResponse, CreateManualOrderPayload>(
-    "/admin/orders",
+    "/orders",
     payload
   );
 }

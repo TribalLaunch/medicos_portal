@@ -91,7 +91,7 @@ export async function createOrderFn(req, res, next) {
     const total = subtotal + shippingNum + taxNum - discountNum;
 
     // Status — use your model’s enum names
-    const status = paid ? "paid" : "pending_payment";
+    const status = paid ? "paid" : "new";
 
     const orderDoc = {
       customerId,
@@ -114,14 +114,6 @@ export async function createOrderFn(req, res, next) {
       // createdBy: userId,
       // source: 'backoffice',
     };
-
-    // Idempotency support (if your codebase already has a field)
-    // const idempKey = req.get('Idempotency-Key') || rest.idempotencyKey;
-    // if (idempKey) {
-    //   const existing = await Order.findOne({ externalIdempotencyKey: idempKey }).lean();
-    //   if (existing) return res.status(200).json(existing);
-    //   orderDoc.externalIdempotencyKey = idempKey;
-    // }
 
     const order = await Order.create(orderDoc);
     // Ensure plain JSON:

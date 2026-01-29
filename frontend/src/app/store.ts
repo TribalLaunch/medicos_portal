@@ -13,22 +13,7 @@ setAuth: (token: string, user: SessionUser) => void
 clearAuth: () => void
 }
 
-
 type UiState = { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }
-
-
-// export const useAuthStore = create(
-//   persist(
-//     (set) => ({
-//       user: null,
-//       token: null,
-//       setUser: (user: any) => set({ user }),
-//       setToken: (token: string) => set({ token }),
-//       logout: () => set({ user: null, token: null }),
-//     }),
-//     { name: "medicos_auth" }
-//   )
-// );
 
 export const useAuthStore = create<AuthState>((set) => ({
 token: null,

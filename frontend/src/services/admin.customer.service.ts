@@ -2,7 +2,8 @@ import { getItem } from "../lib/fetcher";
 
 export type AdminCustomer = {
   _id: string;
-  name: string;
+  customer_name: string;
+  customer_number?: string;
   email?: string;
 };
 
@@ -12,5 +13,7 @@ export function searchAdminCustomers(params?: { q?: string; page?: number; pageS
   if (params?.page) p.set("page", String(params.page));
   if (params?.pageSize) p.set("pageSize", String(params.pageSize));
   const qs = p.toString() ? `?${p.toString()}` : "";
-  return getItem<AdminCustomer[]>(`/admin/customers${qs}`); // list returns array in our current fetcher behavior
+
+  // NOTE: because your fetcher unwraps to array, this returns AdminCustomer[]
+  return getItem<AdminCustomer[]>(`/admin/customers${qs}`);
 }

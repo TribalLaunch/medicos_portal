@@ -13,9 +13,6 @@ export default function MyOrders() {
 
   // const orders = data || [];
   const orders = Array.isArray(data) ? data : [];
-  
-  console.log("DATA: ", data)
-  console.log("ORDERS: ", orders)
 
   return (
     <div className="space-y-4">
