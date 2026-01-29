@@ -10,9 +10,9 @@ import { useLogout } from '../../hooks/useAuth'
 const NAV: Record<Role, { label: string; to: string }[]> = {
 admin: [
 { label: 'Dashboard', to: '/dashboard' },
-{ label: 'Orders', to: '/orders' },
+{ label: 'Orders', to: '/sales/orders' },
 { label: 'Checkout', to: '/checkout' },
-{ label: 'Products', to: '/products' },
+{ label: 'Products', to: '/admin/products' },
 { label: 'Customers', to: '/customers' },
 { label: 'Price Contracts', to: '/admin/price-contracts' },
 { label: 'Reports', to: '/reports' },

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminOrders } from "../../services/orders.service";
+import { Link } from "react-router-dom";
 
 export default function AdminOrders() {
   const [q, setQ] = useState("");
@@ -21,6 +22,10 @@ export default function AdminOrders() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Orders</h2>
       </div>
+      <div className="flex items-center justify-between">
+  <h2 className="text-xl font-semibold">Orders</h2>
+  <Link className="btn-primary" to="/sales/orders/new">New Order</Link>
+</div>
 
       <div className="card flex flex-col md:flex-row gap-2">
         <input

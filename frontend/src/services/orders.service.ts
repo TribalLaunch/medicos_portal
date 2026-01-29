@@ -1,4 +1,4 @@
-import { getItem, getJSON } from "../lib/fetcher";
+import { getItem, postItem } from "../lib/fetcher";
 
 export type OrderLineItem = {
   sku: string;
@@ -23,13 +23,6 @@ export type Order = {
   shipping?: number;
   tax?: number;
   total?: number;
-
-//   totals?: {
-//     subtotal?: number;
-//     shipping?: number;
-//     tax?: number;
-//     total?: number;
-//   };
 };
 
 export type PagedResponse<T> = {
@@ -68,4 +61,42 @@ export function listAdminOrders(params?: {
 
 export function getOrderById(id: string) {
   return getItem<Order>(`/orders/${id}`);
+}
+
+export type CreateManualOrderPayload = {
+  customerId: string;
+  orderType: "manual" | "po";
+  poNumber?: string;
+
+  // optional contact/shipping if your backend stores it
+  email?: string;
+  shippingAddress?: {
+    name?: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    state: string;
+    zip: string;
+    country?: string;
+  };
+
+  items: Array<{
+    sku: string;
+    name?: string;
+    qty: number;
+    price?: number; // allow backend to compute from product/contract if omitted
+    size?: string;
+  }>;
+};
+
+export type CreateManualOrderResponse = {
+  _id: string;
+  status: string;
+};
+
+export function createAdminOrder(payload: CreateManualOrderPayload) {
+  return postItem<CreateManualOrderResponse, CreateManualOrderPayload>(
+    "/admin/orders",
+    payload
+  );
 }

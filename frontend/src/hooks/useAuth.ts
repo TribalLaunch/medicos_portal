@@ -9,13 +9,23 @@ import type { SessionUser } from '../app/types'
 import { LoginSchema, type LoginDto } from '../lib/validators/auth'
 import { api } from '../lib/axios'
 
+
 export function useHydrateUser() {
-const setAuth = useAuthStore((s) => s.setAuth)
-useEffect(() => {
-const token = sessionStorage.getItem('medicos_token')
-if (!token) return
-auth.me().then((u) => setAuth(token, u as SessionUser)).catch(() => sessionStorage.removeItem('medicos_token'))
-}, [setAuth])
+    const setAuth = useAuthStore((s) => s.setAuth)
+    useEffect(() => {
+        const token = sessionStorage.getItem('medicos_token')
+        if (!token) return
+         // ✅ Ensure axios has the header on refresh/navigation
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+
+        auth
+            .me()
+            .then((u) => setAuth(token, u as SessionUser))
+            .catch(() => {
+                sessionStorage.removeItem('medicos_token');
+                delete api.defaults.headers.Authorization;
+            })
+        }, [setAuth])
 }
 
 
