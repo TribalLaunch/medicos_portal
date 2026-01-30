@@ -11,11 +11,15 @@ export type OrderLineItem = {
 export type Order = {
   _id: string;
   orderNumber?: string;
-  status: string; // pending, paid, shipped, etc.
+  status: string;
   createdAt: string;
+  source?: "backoffice" | "website";
 
   customerId?: string;
   email?: string;
+
+  customerName?: string;
+  customerNumber?: string;
 
   items: OrderLineItem[];
 

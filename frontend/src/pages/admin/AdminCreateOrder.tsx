@@ -132,54 +132,19 @@ export default function AdminCreateOrder() {
     {customersFetching ? "Loading customers…" : "Select customer"}
   </option>
 
-  {(customers || []).map((c) => (
-    <option key={c._id} value={c._id}>
-      {c.customer_name}
-      {c.customer_number ? ` — ${c.customer_number}` : ""}
-    </option>
-  ))}
-</select>
-
-{!customersFetching && (customers || []).length === 0 ? (
-  <div className="text-sm text-gray-500 mt-1">
-    No customers match “{customerQ}”.
-  </div>
-) : null}
-
-        {/* <select
-            className="input w-full"
-            value={selectedCustomerId}
-            onChange={(e) => setSelectedCustomerId(e.target.value)}
-            disabled={customerQ.trim().length < 2}
-            >
-            {customerQ.trim().length < 2 ? (
-                <option value="">Type at least 2 characters to search…</option>
-            ) : (
-                <option value="">
-                {customersFetching ? "Searching customers…" : "Select customer"}
-                </option>
-            )}
-
-            {(customers || []).map((c) => (
-                <option key={c._id} value={c._id}>
-                {c.name}
-                {c.customer_number ? ` — #${c.customer_number}` : ""}
-                </option>
-            ))}
-        </select> */}
-
-        {/* <select
-          className="input w-full"
-          value={selectedCustomerId}
-          onChange={(e) => setSelectedCustomerId(e.target.value)}
-        >
-          <option value="">Select customer</option>
-          {(customers || []).map((c) => (
+        {(customers || []).map((c) => (
             <option key={c._id} value={c._id}>
-              {c.name} {c.email ? `— ${c.email}` : ""}
+                {c.customer_number ? `${c.customer_number}` : ""}
+            {`: ${c.customer_name}`}
             </option>
-          ))}
-        </select> */}
+        ))}
+        </select>
+
+        {!customersFetching && (customers || []).length === 0 ? (
+        <div className="text-sm text-gray-500 mt-1">
+            No customers match “{customerQ}”.
+        </div>
+        ) : null}
       </div>
 
       {/* Order type */}

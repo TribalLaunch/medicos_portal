@@ -111,8 +111,8 @@ export async function createOrderFn(req, res, next) {
       // },
       ...(paid ? { paidAt: new Date() } : {}),
       // Include createdBy/source ONLY if your Order model already has those fields:
-      // createdBy: userId,
-      // source: 'backoffice',
+      user: userId,
+      source: "backoffice",
     };
 
     const order = await Order.create(orderDoc);

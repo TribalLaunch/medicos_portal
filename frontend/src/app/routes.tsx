@@ -28,6 +28,7 @@ const Dashboard = lazy(()=>import('../pages/dashboard/Dashboard'))
 const AdminProducts = lazy(()=>import('../pages/admin/AdminProducts'))
 const AdminOrders = lazy(() => import("../pages/admin/AdminOrders"));
 const AdminCreateOrder = lazy(() => import("../pages/admin/AdminCreateOrder"));
+const AdminOrderDetail = lazy(() => import("../pages/admin/AdminOrderDetail"))
 
 export default function AppRoutes(){
   return (
@@ -60,6 +61,7 @@ export default function AppRoutes(){
         <Route path="/reports" element={<div className="card">Reports (Phase 6)</div>} />
         <Route path="/sales/orders/new" element={<RouteGuard roles={["admin", "sales"]}><AdminCreateOrder/></RouteGuard>} />
         <Route path="/sales/orders" element={<RouteGuard roles={["admin", "sales"]}><AdminOrders/></RouteGuard>} />
+        <Route path="/sales/orders/:id" element={<RouteGuard roles={["admin", "sales"]}><AdminOrderDetail/></RouteGuard>} />
       </Route>
 
       <Route path="/unauthorized" element={<Unauthorized/>} />

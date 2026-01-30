@@ -12,7 +12,7 @@ export async function stripeWebhook(req, res) {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      config.stripeWebhookSecret
+      config.stripeWebhookSecret,
     );
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -20,6 +20,7 @@ export async function stripeWebhook(req, res) {
 
   // Log to help while testing
   console.log("[Stripe] Event:", event.type);
+  console.log("WEBHOOK EVENT: ", event);
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
@@ -37,7 +38,7 @@ export async function stripeWebhook(req, res) {
         "[Stripe] Order not found. session.id:",
         session.id,
         "metadata.orderId:",
-        session.metadata?.orderId
+        session.metadata?.orderId,
       );
       return res.json({ received: true }); // ack so Stripe won’t retry forever
     }
