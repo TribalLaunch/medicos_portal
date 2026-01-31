@@ -104,3 +104,10 @@ export function createAdminOrder(payload: CreateManualOrderPayload) {
     payload
   );
 }
+
+
+export type ReceiptResponse = { receiptUrl: string };
+
+export function getOrderReceiptUrl(orderId: string) {
+  return getItem<ReceiptResponse>(`/orders/${orderId}/receipt`);
+}

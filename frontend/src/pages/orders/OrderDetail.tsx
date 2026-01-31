@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
+import { useMutation } from "@tanstack/react-query";
+import { getOrderReceiptUrl } from "../../services/orders.service";
 
 function fmtMoney(n?: number) {
   const v = Number(n ?? 0);
@@ -23,6 +25,10 @@ export default function OrderDetail() {
 
   const itemCount = order.items?.reduce((s, x) => s + (x.qty || 0), 0) || 0;
 
+  const receiptMutation = useMutation({
+  mutationFn: () => getOrderReceiptUrl(order._id),
+});
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
@@ -41,6 +47,85 @@ export default function OrderDetail() {
           {order.email ? <div className="text-xs text-gray-500 mt-1">{order.email}</div> : null}
         </div>
       </div>
+
+      {/* Receipt Link */}
+      <button
+  className="btn-outline"
+  disabled={
+    receiptMutation.isPending ||
+    !(order.status === "paid" || order.status === "processing" || order.status === "shipped")
+  }
+  onClick={async () => {
+  // ✅ Open a real window handle first (no noreferrer/noopener here)
+  const win = window.open("about:blank", "_blank");
+  if (win) win.opener = null; // ✅ security: prevent reverse-tabnabbing
+
+  try {
+    const resp = await receiptMutation.mutateAsync();
+
+    // support { url } or { receiptUrl } or raw string
+    const rawUrl =
+      (resp as any)?.url ??
+      (resp as any)?.receiptUrl ??
+      resp;
+
+    const url =
+      typeof rawUrl === "string" && rawUrl.startsWith("http")
+        ? rawUrl
+        : typeof rawUrl === "string"
+          ? `https://${rawUrl}`
+          : "";
+
+    if (!url) throw new Error("Receipt URL missing");
+
+    // ✅ Navigate the NEW tab, never the current tab
+    if (win) {
+      win.location.href = url;
+      win.focus();
+    } else {
+      // If popup was blocked, tell user instead of redirecting current tab
+      throw new Error("Popup blocked — please allow popups to view receipt.");
+    }
+  } catch (e: any) {
+    if (win) win.close();
+    alert(e?.message || "Receipt not available yet. Try again in a moment.");
+  }
+}}
+
+>
+  {receiptMutation.isPending ? "Opening…" : "View receipt"}
+</button>
+
+
+      {/* <div className="card flex items-center justify-between gap-3">
+        <div>
+          <div className="font-semibold">Receipt</div>
+          <div className="text-sm text-gray-600">
+            {order.status === "paid" || order.status === "processing" || order.status === "shipped"
+              ? "View your Stripe receipt in a new tab."
+              : "Receipt is available after payment is completed."}
+          </div>
+        </div>
+
+        <button
+          className="btn-outline"
+          disabled={
+            receiptMutation.isPending ||
+            !(order.status === "paid" || order.status === "processing" || order.status === "shipped")
+          }
+          onClick={() => receiptMutation.mutate()}
+        >
+          {receiptMutation.isPending ? "Opening…" : "View receipt"}
+        </button>
+      </div>
+
+      {receiptMutation.isError ? (
+        <div className="text-sm text-red-700">
+          {(receiptMutation.error as any)?.message ||
+            "Receipt not available yet. Try again in a moment."}
+        </div>
+      ) : null} */}
+
 
       {/* Items */}
       <div className="card">
