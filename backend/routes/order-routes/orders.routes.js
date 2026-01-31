@@ -9,11 +9,13 @@ import {
   getFulfillment,
   updateFulfillment,
   deleteFulfillment,
+  getOrderReceipt,
 } from "./orders.controller.js";
 import {
   requireCustomer,
   requireSales,
   requireAdmin,
+  requireAuth,
 } from "../../middleware/auth.js";
 
 const r = Router();
@@ -28,15 +30,16 @@ r.post("/", requireSales, createOrder);
 r.post("/:orderId/fulfillment", requireAdmin, createFulfillment);
 r.get("/:orderId/fulfillment", requireAdmin, listFulfillments);
 r.get("/:orderId/fulfillment/:fulfillmentId", requireAdmin, getFulfillment);
+r.get("/:orderId/receipt", requireAuth(), getOrderReceipt);
 r.patch(
   "/:orderId/fulfillment/:fulfillmentId",
   requireAdmin,
-  updateFulfillment
+  updateFulfillment,
 );
 r.delete(
   "/:orderId/fulfillment/:fulfillmentId",
   requireAdmin,
-  deleteFulfillment
+  deleteFulfillment,
 );
 
 export default r;

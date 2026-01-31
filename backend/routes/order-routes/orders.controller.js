@@ -7,6 +7,7 @@ import { listFulfillmentsFn } from "./functions/list_fulfillment.js";
 import { getFulfillmentFn } from "./functions/get_fulfillment.js";
 import { updateFulfillmentFn } from "./functions/update_fulfillment.js";
 import { deleteFulfillmentFn } from "./functions/delete_fulfillment.js";
+import { getOrderReceiptFn } from "./functions/get_order_receipt.js";
 
 export async function listOrders(req, res, next) {
   try {
@@ -71,5 +72,17 @@ export async function deleteFulfillment(req, res, next) {
     deleteFulfillmentFn(req, res, next);
   } catch (e) {
     next(e);
+  }
+}
+
+export async function getOrderReceipt(req, res, next) {
+  try {
+    const { status, body } = await getOrderReceiptFn({
+      params: req.params,
+      user: req.user,
+    });
+    return res.status(status).json(body);
+  } catch (err) {
+    return next(err);
   }
 }

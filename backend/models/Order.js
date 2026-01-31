@@ -71,7 +71,7 @@ const OrderSchema = new Schema({
     enum: ["stripe", "manual", "po", "net_terms", "cash", "check"],
     default: "stripe",
   },
-  paymentRef: String, // Optional reference (check, PO/invoice number)
+  paymentRef: String,
   shippingAddress: AddressSchema,
   billingAddress: AddressSchema,
   subtotal: Number,
@@ -82,7 +82,11 @@ const OrderSchema = new Schema({
     enum: ["new", "processing", "paid", "shipped", "cancelled"],
     default: "new",
   },
-  stripeSessionId: String,
+  payment: {
+    stripeSessionId: String,
+    chargeId: String,
+    paymentIntentId: String,
+  },
   fulfillments: [FulfillmentSchema],
   events: [{ type: String }],
   source: {
