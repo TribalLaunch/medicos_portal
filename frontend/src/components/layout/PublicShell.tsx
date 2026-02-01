@@ -1,10 +1,11 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../app/store'
 import { useLogout } from '../../hooks/useAuth'
 import CartBadge from '../cart/CartBadge'
 
 export default function PublicShell(){
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const logout = useLogout()
   const loc = useLocation()
   const nav = [
@@ -36,7 +37,10 @@ export default function PublicShell(){
               <>
               <CartBadge />
                 <Link to="/dashboard" className="btn-outline">Dashboard</Link>
-                <button onClick={logout} className="btn-outline">Sign out</button>
+                <button onClick={() => {
+                  logout();
+                  navigate("/login")
+                }} className="btn-outline">Sign out</button>
               </>
             ) : (
               <>

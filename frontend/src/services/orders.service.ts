@@ -1,5 +1,6 @@
 import { getItem, postItem } from "../lib/fetcher";
 
+// Order Fields & Functions
 export type OrderLineItem = {
   sku: string;
   name: string;
@@ -27,6 +28,8 @@ export type Order = {
   shipping?: number;
   tax?: number;
   total?: number;
+
+  fulfillments?: Fulfillment[];
 };
 
 export type PagedResponse<T> = {
@@ -111,3 +114,49 @@ export type ReceiptResponse = { receiptUrl: string };
 export function getOrderReceiptUrl(orderId: string) {
   return getItem<ReceiptResponse>(`/orders/${orderId}/receipt`);
 }
+
+
+// Fulfillment Fields & Functions
+export type FulfillmentItem = { sku: string; qty: number };
+
+export type FulfillmentEvent = {
+  at?: string;
+  code?: string;
+  description?: string;
+  location?: string;
+};
+
+export type Fulfillment = {
+  _id: string;
+  items: FulfillmentItem[];
+  carrier?: "UPS" | "FedEx" | "USPS" | "DHL" | "Other";
+  serviceLevel?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  labelUrl?: string;
+  status?: "pending" | "labeled" | "in_transit" | "delivered" | "exception";
+  shippingCost?: number;
+  weight?: number;
+  dimensions?: { l?: number; w?: number; h?: number };
+  fromAddress?: {
+    name?: string;
+    line1?: string;
+    city?: string;
+    state?: string;
+    postal?: string;
+    country?: string;
+  };
+  toAddress?: {
+    name?: string;
+    line1?: string;
+    city?: string;
+    state?: string;
+    postal?: string;
+    country?: string;
+  };
+  shippedAt?: string;
+  deliveredAt?: string;
+  events?: FulfillmentEvent[];
+  createdAt?: string;
+  updatedAt?: string;
+};

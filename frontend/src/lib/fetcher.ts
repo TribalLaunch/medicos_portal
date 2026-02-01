@@ -63,3 +63,13 @@ export async function postItem<T, B = unknown>(
   const res = await api.post(url, body);
   return res.data?.data ?? res.data;
 }
+
+export async function patchItem<T, B = unknown>(url: string, body: B): Promise<T> {
+  const res = await api.patch(url, body);
+  return res.data?.data ?? res.data;
+}
+
+export async function deleteItem<T>(url: string): Promise<T> {
+  const res = await api.delete(url);
+  return res.data?.data ?? res.data;
+}

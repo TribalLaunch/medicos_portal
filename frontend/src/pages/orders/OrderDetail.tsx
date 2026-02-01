@@ -3,6 +3,11 @@ import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
 import { useMutation } from "@tanstack/react-query";
 import { getOrderReceiptUrl } from "../../services/orders.service";
+import { useAuthStore } from "../../app/store";
+import { Navigate } from "react-router-dom";
+
+// Import Components
+import FulfillmentList from "../../components/orders/FulfillmentList";
 
 function fmtMoney(n?: number) {
   const v = Number(n ?? 0);
@@ -11,24 +16,32 @@ function fmtMoney(n?: number) {
 
 export default function OrderDetail() {
   const { id } = useParams();
+  const orderId = id || "";
+
+  const user = useAuthStore((s) => s.user);
+  if (user && (user.role === "admin" || user.role === "sales")) {
+    return <Navigate to={`/admin/orders/${orderId}`} replace />;
+  }
 
   const { data: order, isLoading, error } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ["order", orderId],
     queryFn: () => getOrderById(id!),
     enabled: !!id,
   });
+
+  const receiptMutation = useMutation({
+  mutationFn: () => getOrderReceiptUrl(orderId),
+});
 
   if (!id) return <div className="card">Missing order id.</div>;
   if (isLoading) return <div className="card">Loading order…</div>;
   if (error) return <div className="card text-red-700">Failed to load order.</div>;
   if (!order) return <div className="card">Order not found.</div>;
 
+  
   const itemCount = order.items?.reduce((s, x) => s + (x.qty || 0), 0) || 0;
 
-  const receiptMutation = useMutation({
-  mutationFn: () => getOrderReceiptUrl(order._id),
-});
-
+  
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
@@ -97,36 +110,6 @@ export default function OrderDetail() {
 </button>
 
 
-      {/* <div className="card flex items-center justify-between gap-3">
-        <div>
-          <div className="font-semibold">Receipt</div>
-          <div className="text-sm text-gray-600">
-            {order.status === "paid" || order.status === "processing" || order.status === "shipped"
-              ? "View your Stripe receipt in a new tab."
-              : "Receipt is available after payment is completed."}
-          </div>
-        </div>
-
-        <button
-          className="btn-outline"
-          disabled={
-            receiptMutation.isPending ||
-            !(order.status === "paid" || order.status === "processing" || order.status === "shipped")
-          }
-          onClick={() => receiptMutation.mutate()}
-        >
-          {receiptMutation.isPending ? "Opening…" : "View receipt"}
-        </button>
-      </div>
-
-      {receiptMutation.isError ? (
-        <div className="text-sm text-red-700">
-          {(receiptMutation.error as any)?.message ||
-            "Receipt not available yet. Try again in a moment."}
-        </div>
-      ) : null} */}
-
-
       {/* Items */}
       <div className="card">
         <div className="font-semibold mb-3">Items</div>
@@ -184,6 +167,17 @@ export default function OrderDetail() {
         <Link to="/orders" className="btn-outline">Back to Orders</Link>
         <Link to="/products" className="btn-primary">Shop</Link>
       </div>
+
+      {/* Fulfillment Section */}
+      <div className="card space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="font-semibold">Fulfillment</div>
+        </div>
+
+        <FulfillmentList fulfillments={order.fulfillments} readOnly />
+
+      </div>
+
     </div>
   );
 }

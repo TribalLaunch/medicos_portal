@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
+import { useAuthStore } from "../../app/store";
+
+// Fulfillment Components
+import FulfillmentList from "../../components/orders/FulfillmentList";
+import FulfillmentAdminPanel from "../../components/admin/FulfillmentAdminPanel";
 
 function fmtMoney(n?: number) {
   const v = Number(n ?? 0);
@@ -9,6 +14,9 @@ function fmtMoney(n?: number) {
 
 export default function OrderDetail() {
   const { id } = useParams();
+
+  const user = useAuthStore((s) => s.user);
+const canEditFulfillment = user?.role === "admin" || user?.role === "sales";
 
   const { data: order, isLoading, error } = useQuery({
     queryKey: ["order", id],
@@ -98,6 +106,28 @@ export default function OrderDetail() {
       <div className="flex gap-2">
         <Link to="/sales/orders" className="btn-outline">Back to Orders</Link>
       </div>
+
+      {/* Fulfillment Section */}
+      <div className="card space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="font-semibold">Fulfillment</div>
+        </div>
+
+        {/* Show shipments to admin too */}
+        <FulfillmentList fulfillments={order.fulfillments} readOnly={!canEditFulfillment} />
+
+        {/* Admin/Sales can edit */}
+        {canEditFulfillment ? (
+          <div className="pt-3 border-t">
+            <FulfillmentAdminPanel
+              order={order}
+              fulfillments={order.fulfillments}
+              canEdit={canEditFulfillment}
+            />
+          </div>
+        ) : null}
+      </div>
+
     </div>
   );
 }

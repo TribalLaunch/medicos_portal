@@ -45,4 +45,11 @@ return u
 }
 
 
-export function useLogout() { const clearAuth = useAuthStore((s) => s.clearAuth); return () => { sessionStorage.removeItem('medicos_token'); clearAuth() } }
+export function useLogout() { 
+    const clearAuth = useAuthStore((s) => s.clearAuth); 
+    return () => { 
+        sessionStorage.removeItem('medicos_token');
+        delete api.defaults.headers.Authorization;
+        clearAuth() 
+    } 
+}

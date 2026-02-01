@@ -46,8 +46,6 @@ export default function AppRoutes(){
         <Route path="/checkout" element={<Checkout/>} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
-        <Route path="/orders" element={<MyOrders />} />
-        <Route path="/orders/:id" element={<OrderDetail />} />
       </Route>
 
       {/* AUTH-ONLY */}
@@ -55,13 +53,14 @@ export default function AppRoutes(){
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/admin/products" element={<RouteGuard role="admin"><AdminProducts/></RouteGuard>} />
         <Route path="/customers" element={<div className="card">Customers (Phase 4)</div>} />
-        <Route path="/orders" element={<div className="card">Orders (Phase 3)</div>} />
         <Route path="/admin" element={<div className="card">Admin Home (Phase 5)</div>} />
         <Route path="/admin/price-contracts" element={<div className="card">Price Contracts (Phase 5)</div>} />
         <Route path="/reports" element={<div className="card">Reports (Phase 6)</div>} />
         <Route path="/sales/orders/new" element={<RouteGuard roles={["admin", "sales"]}><AdminCreateOrder/></RouteGuard>} />
         <Route path="/sales/orders" element={<RouteGuard roles={["admin", "sales"]}><AdminOrders/></RouteGuard>} />
         <Route path="/sales/orders/:id" element={<RouteGuard roles={["admin", "sales"]}><AdminOrderDetail/></RouteGuard>} />
+        <Route path="/orders/:id" element={<RouteGuard role="customer"><OrderDetail /></RouteGuard>} />
+        <Route path="/orders" element={<RouteGuard role="customer"><MyOrders /></RouteGuard>} />
       </Route>
 
       <Route path="/unauthorized" element={<Unauthorized/>} />
