@@ -62,13 +62,40 @@ const FulfillmentSchema = new mongoose.Schema(
   { _id: true, timestamps: true },
 );
 
+const PaymnentSchema = new Schema({
+  amount: { type: Number, required: true },
+  method: {
+    type: String,
+    enum: ["card", "ach", "check", "wire", "cash", "other"],
+    required: true,
+  },
+  reference: { type: String, default: null },
+  notes: { type: String, default: null },
+  paidAt: { type: Date, default: Date.now },
+  source: {
+    type: String,
+    enum: ["customer_portal", "backoffice"],
+    required: true,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+
+  stripeSessionId: { type: String, default: null },
+  stripePaymentIntentId: { type: String, default: null },
+  stripeChargeId: { type: String, default: null },
+  receiptUrl: { type: String, default: null },
+});
+
 const OrderSchema = new Schema({
   userId: { type: mongoose.Types.ObjectId, ref: "User" },
   customerId: { type: mongoose.Types.ObjectId, ref: "Customer" },
   items: [OrderItemSchema],
   paymentMethod: {
     type: String,
-    enum: ["stripe", "manual", "po", "net_terms", "cash", "check"],
+    enum: ["stripe", "invoice"],
     default: "stripe",
   },
   paymentRef: String,
@@ -87,12 +114,33 @@ const OrderSchema = new Schema({
     chargeId: String,
     paymentIntentId: String,
   },
+  payments: [PaymnentSchema],
   fulfillments: [FulfillmentSchema],
   events: [{ type: String }],
   source: {
     type: String,
     enum: ["backoffice", "website"],
     default: "website",
+  },
+  termsDays: {
+    type: Number,
+    default: null,
+  },
+  dueDate: {
+    type: Date,
+    default: null,
+  },
+  invoiceStatus: {
+    type: String,
+    enum: ["open", "partially_paid", "paid", "void"],
+  },
+  amountPaid: {
+    type: Number,
+    default: 0,
+  },
+  balanceDue: {
+    type: Number,
+    default: 0,
   },
   createdAt: {
     type: Date,

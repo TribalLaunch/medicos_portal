@@ -10,6 +10,7 @@ import {
   updateFulfillment,
   deleteFulfillment,
   getOrderReceipt,
+  createInvoiceOrder,
 } from "./orders.controller.js";
 import {
   requireCustomer,
@@ -41,5 +42,8 @@ r.delete(
   requireAdmin,
   deleteFulfillment,
 );
+
+// Invoices
+r.post("/invoice", requireAuth(), createInvoiceOrder);
 
 export default r;

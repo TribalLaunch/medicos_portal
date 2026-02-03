@@ -8,6 +8,7 @@ import { getFulfillmentFn } from "./functions/get_fulfillment.js";
 import { updateFulfillmentFn } from "./functions/update_fulfillment.js";
 import { deleteFulfillmentFn } from "./functions/delete_fulfillment.js";
 import { getOrderReceiptFn } from "./functions/get_order_receipt.js";
+import { createInvoiceOrderFn } from "./functions/create_invoice_order.js";
 
 export async function listOrders(req, res, next) {
   try {
@@ -80,6 +81,18 @@ export async function getOrderReceipt(req, res, next) {
     const { status, body } = await getOrderReceiptFn({
       params: req.params,
       user: req.user,
+    });
+    return res.status(status).json(body);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function createInvoiceOrder(req, res, next) {
+  try {
+    const { status, body } = await createInvoiceOrderFn({
+      user: req.user,
+      body: req.body,
     });
     return res.status(status).json(body);
   } catch (err) {

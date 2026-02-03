@@ -12,6 +12,22 @@ const CustomerSchema = new Schema(
       enum: ["Clinic", "Hospital", "Patient", "Other"],
       default: "Clinic",
     },
+    allowInvoice: {
+      type: Boolean,
+      default: false,
+    },
+    termsDays: {
+      type: Number,
+      default: null,
+    },
+    invoiceEmail: {
+      type: String,
+      default: null,
+    },
+    creditLimit: {
+      type: Number,
+      default: null,
+    },
     salesRepId: { type: mongoose.Types.ObjectId, ref: "User", index: true }, // assigned Sales user
     addresses: [
       {
@@ -26,7 +42,7 @@ const CustomerSchema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 CustomerSchema.index({ customer_name: "text", customer_number: "text" });
