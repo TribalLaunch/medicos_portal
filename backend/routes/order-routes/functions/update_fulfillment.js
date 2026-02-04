@@ -37,7 +37,7 @@ export async function updateFulfillmentFn(req, res) {
       order.status = "shipped";
     if (f.status === "delivered") {
       const allDelivered = order.fulfillments.every(
-        (x) => x.status === "delivered"
+        (x) => x.status === "delivered",
       );
       if (allDelivered) order.status = "completed";
     }

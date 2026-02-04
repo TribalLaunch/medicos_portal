@@ -62,7 +62,7 @@ const FulfillmentSchema = new mongoose.Schema(
   { _id: true, timestamps: true },
 );
 
-const PaymnentSchema = new Schema({
+const PaymentSchema = new Schema({
   amount: { type: Number, required: true },
   method: {
     type: String,
@@ -114,7 +114,7 @@ const OrderSchema = new Schema({
     chargeId: String,
     paymentIntentId: String,
   },
-  payments: [PaymnentSchema],
+  payments: [PaymentSchema],
   fulfillments: [FulfillmentSchema],
   events: [{ type: String }],
   source: {
@@ -136,7 +136,6 @@ const OrderSchema = new Schema({
   },
   amountPaid: {
     type: Number,
-    default: 0,
   },
   balanceDue: {
     type: Number,

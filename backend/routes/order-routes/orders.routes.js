@@ -11,6 +11,8 @@ import {
   deleteFulfillment,
   getOrderReceipt,
   createInvoiceOrder,
+  recordOrderPayment,
+  createInvoiceStripePaymentSession,
 } from "./orders.controller.js";
 import {
   requireCustomer,
@@ -43,7 +45,9 @@ r.delete(
   deleteFulfillment,
 );
 
-// Invoices
+// Invoices & Recording Invoice Payments
 r.post("/invoice", requireAuth(), createInvoiceOrder);
+r.post("/:ordersId/payment", requireSales, recordOrderPayment);
+r.post("/:orderId/payments/stripe-session", createInvoiceStripePaymentSession);
 
 export default r;

@@ -2,6 +2,7 @@
 import Stripe from "stripe";
 import { config } from "../../config/env.js";
 import Order from "../../models/Order.js";
+import { recomputeInvoiceTotals } from "../../services/invoice.js";
 
 /**
  * Stripe Webhook Handler

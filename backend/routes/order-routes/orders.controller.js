@@ -9,6 +9,8 @@ import { updateFulfillmentFn } from "./functions/update_fulfillment.js";
 import { deleteFulfillmentFn } from "./functions/delete_fulfillment.js";
 import { getOrderReceiptFn } from "./functions/get_order_receipt.js";
 import { createInvoiceOrderFn } from "./functions/create_invoice_order.js";
+import { recordOrderPaymentFn } from "./functions/record_order_payment.js";
+import { createInvoiceStripePaymentSessionFn } from "./functions/create_invoice_stripe_session.js";
 
 export async function listOrders(req, res, next) {
   try {
@@ -98,4 +100,28 @@ export async function createInvoiceOrder(req, res, next) {
   } catch (err) {
     return next(err);
   }
+}
+
+export async function recordOrderPayment(req, res, next) {
+  try {
+    const { status, body } = await recordOrderPaymentFn({
+      params: req.params,
+      body: req.body,
+      user: req.user,
+    });
+    return res.status(status).json(body);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function createInvoiceStripePaymentSession(req, res, next) {
+  try {
+    const { status, body } = await createInvoiceStripePaymentSessionFn({
+      params: req.params,
+      body: req.body,
+      user: req.user,
+    });
+    return res.status(status).json(body);
+  } catch (err) {}
 }

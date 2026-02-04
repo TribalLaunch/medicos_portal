@@ -9,11 +9,14 @@ function addDays(date, days) {
   return d;
 }
 
+// Customer Generated Create Invoice Function
+// TO DO: Create ADMIN ONLY create Invoice
+
 export async function createInvoiceOrderFn({ user, body }) {
   if (!user?.id)
     return { status: 401, body: { message: "Not authenticated." } };
 
-  const customer = await Customer.findById(user.id).lean();
+  const customer = await Customer.findById(user.customerId).lean();
   if (!customer)
     return { status: 404, body: { message: "Customer not found." } };
 
@@ -47,7 +50,7 @@ export async function createInvoiceOrderFn({ user, body }) {
     subtotal: priced.subtotal,
     shipping: 0,
     tax: 0,
-    grandTotal: priced.subtotal, // or your existing "total" field
+    total: priced.subtotal,
     paymentMethod: "invoice",
     source: "website",
     termsDays,
