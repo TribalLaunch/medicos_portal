@@ -86,7 +86,7 @@ const PaymentSchema = new Schema({
   stripeSessionId: { type: String, default: null },
   stripePaymentIntentId: { type: String, default: null },
   stripeChargeId: { type: String, default: null },
-  receiptUrl: { type: String, default: null },
+  // receiptUrl: { type: String, default: null },
 });
 
 const OrderSchema = new Schema({
@@ -106,7 +106,14 @@ const OrderSchema = new Schema({
   total: Number,
   status: {
     type: String,
-    enum: ["new", "processing", "paid", "shipped", "cancelled"],
+    enum: [
+      "new",
+      "processing",
+      "paid",
+      "shipped",
+      "cancelled",
+      "pending_payment",
+    ],
     default: "new",
   },
   payment: {

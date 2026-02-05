@@ -1,8 +1,10 @@
 import Order from "../../../models/Order.js";
 import { recomputeInvoiceTotals } from "../../../services/invoice.js";
 
+// Payments made through the backoffice for an open invoice
+
 export async function recordOrderPaymentFn({ params, body, user }) {
-  const { id } = params || {};
+  const { orderId } = params || {};
   const { amount, method, reference, notes, paidAt } = body || {};
 
   if (!user?.id)
@@ -13,7 +15,7 @@ export async function recordOrderPaymentFn({ params, body, user }) {
     return { status: 403, body: { message: "Forbidden." } };
   }
 
-  const order = await Order.findById(id);
+  const order = await Order.findById(orderId);
   if (!order) return { status: 404, body: { message: "Order not found." } };
 
   if (order.paymentMethod !== "invoice") {

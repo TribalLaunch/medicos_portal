@@ -47,7 +47,11 @@ r.delete(
 
 // Invoices & Recording Invoice Payments
 r.post("/invoice", requireAuth(), createInvoiceOrder);
-r.post("/:ordersId/payment", requireSales, recordOrderPayment);
-r.post("/:orderId/payments/stripe-session", createInvoiceStripePaymentSession);
+r.post("/:orderId/payment", requireSales, recordOrderPayment);
+r.post(
+  "/:orderId/payment/stripe-session",
+  requireAuth(),
+  createInvoiceStripePaymentSession,
+);
 
 export default r;

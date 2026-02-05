@@ -11,22 +11,26 @@ export async function createInvoiceStripePaymentSessionFn({
   body,
   user,
 }) {
-  const { id } = params || {};
+  const { orderId } = params || {};
   const reqAmount = body?.amount;
 
   if (!user?.id)
     return { status: 401, body: { message: "Not authenticated." } };
 
-  const order = await Order.findById(id).populate("customerId");
+  const order = await Order.findById(orderId).populate("customerId");
   if (!order) return { status: 404, body: { message: "Order not found." } };
 
-  const role = user.role || user.user_type;
-  const isStaff = role === "admin" || role === "sales";
-  const isOwner =
-    order.customerId && String(order.customerId._id) === String(user.id);
+  //   const role = user.role || user.user_type;
+  //   const isStaff = role === "admin" || role === "sales";
 
-  if (!isStaff && !isOwner)
-    return { status: 403, body: { message: "Forbidden." } };
+  console.log("ORDER CUSTOMER: ", order.customerId._id);
+
+  const isOwner =
+    order.customerId &&
+    String(order.customerId._id) === String(user.customerId);
+
+  // User does not own this order
+  if (!isOwner) return { status: 403, body: { message: "Forbidden." } };
 
   if (order.paymentMethod !== "invoice") {
     return {
@@ -74,6 +78,7 @@ export async function createInvoiceStripePaymentSessionFn({
       orderId: String(order._id),
       purpose: "invoice_payment",
       amountCents: String(amountCents),
+      user: user._id,
     },
   });
 

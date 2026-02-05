@@ -123,5 +123,7 @@ export async function createInvoiceStripePaymentSession(req, res, next) {
       user: req.user,
     });
     return res.status(status).json(body);
-  } catch (err) {}
+  } catch (err) {
+    return next(err);
+  }
 }
