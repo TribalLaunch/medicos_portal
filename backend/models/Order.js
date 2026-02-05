@@ -116,11 +116,11 @@ const OrderSchema = new Schema({
     ],
     default: "new",
   },
-  payment: {
-    stripeSessionId: String,
-    chargeId: String,
-    paymentIntentId: String,
-  },
+  // payment: {
+  //   stripeSessionId: String,
+  //   chargeId: String,
+  //   paymentIntentId: String,
+  // },
   payments: [PaymentSchema],
   fulfillments: [FulfillmentSchema],
   events: [{ type: String }],

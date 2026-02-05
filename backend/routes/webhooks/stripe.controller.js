@@ -52,6 +52,23 @@ export async function stripeWebhook(req, res) {
       const purpose = session?.metadata?.purpose || null; // "invoice_payment"
       const userId = session?.metadata?.user || null;
 
+      // Retrieve Payment Intent to capture chargeId (receipt_url)
+      let chargeId = null;
+      if (paymentIntentId) {
+        try {
+          const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
+            expand: ["latest_charge"],
+          });
+
+          chargeId = pi?.latest_charge?.id || null;
+        } catch (err) {
+          console.warn(
+            "[stripeWebhook] Failed to retrieve PaymentIntent:",
+            err?.message || err,
+          );
+        }
+      }
+
       // Try metadata.orderId first, then fallback to stripeSessionId
       let order = null;
       if (orderIdFromMeta) {
@@ -85,23 +102,6 @@ export async function stripeWebhook(req, res) {
             (paymentIntentId && p.stripePaymentIntentId === paymentIntentId) ||
             (stripeSessionId && p.stripeSessionId === stripeSessionId),
         );
-
-        // Retrieve Payment Intent to capture chargeId (receipt_url)
-        let chargeId = null;
-        if (paymentIntentId) {
-          try {
-            const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
-              expand: ["latest_charge"],
-            });
-
-            chargeId = pi?.latest_charge?.id || null;
-          } catch (err) {
-            console.warn(
-              "[stripeWebhook] Failed to retrieve PaymentIntent:",
-              err?.message || err,
-            );
-          }
-        }
 
         if (!existing) {
           // Determine amount paid from metadata or from session amount_total
@@ -176,6 +176,8 @@ export async function stripeWebhook(req, res) {
           }
         }
 
+        order.events.push("invoice_payment:webhook");
+
         // Store PI/Charge on top-level payment subdoc if you keep it (optional)
         // For invoice orders, we prefer per-payment entry storage instead.
         await order.save();
@@ -193,27 +195,40 @@ export async function stripeWebhook(req, res) {
       }
 
       // Save Stripe Identifiers
-      if (stripeSessionId) order.payment.stripeSessionId = stripeSessionId;
-      if (paymentIntentId) order.payment.paymentIntentId = paymentIntentId;
+      // if (stripeSessionId) order.payment.stripeSessionId = stripeSessionId;
+      // if (paymentIntentId) order.payment.paymentIntentId = paymentIntentId;
 
       // Retrieve Payment Intent to capture chargeId (receipt_url)
-      if (paymentIntentId) {
-        try {
-          const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
-            expand: ["latest_charge"],
-          });
+      // if (paymentIntentId) {
+      //   try {
+      //     const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
+      //       expand: ["latest_charge"],
+      //     });
 
-          const chargeId = pi?.latest_charge?.id || null;
-          if (chargeId) order.payment.chargeId = chargeId;
-        } catch (err) {
-          console.warn(
-            "[stripeWebhook] Failed to retrieve PaymentIntent:",
-            err?.message || err,
-          );
-        }
-      }
+      //     const chargeId = pi?.latest_charge?.id || null;
+      //     if (chargeId) order.payment.chargeId = chargeId;
+      //   } catch (err) {
+      //     console.warn(
+      //       "[stripeWebhook] Failed to retrieve PaymentIntent:",
+      //       err?.message || err,
+      //     );
+      //   }
+      // }
 
       if (order.status !== "paid") {
+        order.payments = order.payments || [];
+        order.payments.push({
+          amount,
+          method: "card",
+          reference: stripeSessionId || null,
+          notes: "Stripe order payment",
+          paidAt: new Date(),
+          source: "customer_portal",
+          stripeSessionId: stripeSessionId || null,
+          stripePaymentIntentId: paymentIntentId || null,
+          stripeChargeId: chargeId || null,
+          createdBy: userId,
+        });
         order.status = "paid";
         order.events.push("paid:webhook");
         await order.save();
