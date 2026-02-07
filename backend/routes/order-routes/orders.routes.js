@@ -33,7 +33,7 @@ r.post("/", requireSales, createOrder);
 r.post("/:orderId/fulfillment", requireAdmin, createFulfillment);
 r.get("/:orderId/fulfillment", requireAdmin, listFulfillments);
 r.get("/:orderId/fulfillment/:fulfillmentId", requireAdmin, getFulfillment);
-r.get("/:orderId/receipt", requireAuth(), getOrderReceipt);
+r.get("/:orderId/payments/:paymentId/receipt", requireAuth(), getOrderReceipt);
 r.patch(
   "/:orderId/fulfillment/:fulfillmentId",
   requireAdmin,

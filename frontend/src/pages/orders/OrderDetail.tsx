@@ -2,12 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
 import { useMutation } from "@tanstack/react-query";
-import { getOrderReceiptUrl } from "../../services/orders.service";
+import { getOrderReceiptUrl, getPaymentReceiptUrl } from "../../services/orders.service";
 import { useAuthStore } from "../../app/store";
 import { Navigate } from "react-router-dom";
+// import type { OrderPayment } from "../../services/orders.service";
+import { getPaymentId, type OrderPayment } from "../../services/orders.service";
 
 // Import Components
 import FulfillmentList from "../../components/orders/FulfillmentList";
+import PaymentsTable from "../../components/orders/PaymentsTable";
 
 function fmtMoney(n?: number) {
   const v = Number(n ?? 0);
@@ -29,8 +32,13 @@ export default function OrderDetail() {
     enabled: !!id,
   });
 
+//   const receiptMutation = useMutation({
+//   mutationFn: () => getOrderReceiptUrl(orderId),
+// });
+
   const receiptMutation = useMutation({
-  mutationFn: () => getOrderReceiptUrl(orderId),
+  mutationFn: ({ orderId, paymentId }: { orderId: string; paymentId: string }) =>
+    getPaymentReceiptUrl(orderId, paymentId),
 });
 
   if (!id) return <div className="card">Missing order id.</div>;
@@ -40,6 +48,31 @@ export default function OrderDetail() {
 
   
   const itemCount = order.items?.reduce((s, x) => s + (x.qty || 0), 0) || 0;
+
+
+  const handleViewReceipt = async (p: OrderPayment) => {
+    const paymentId = getPaymentId(p);
+  if (!paymentId) {
+    alert("This payment does not have an ID yet (cannot open receipt).");
+    return;
+  }
+
+  const win = window.open("about:blank", "_blank");
+  if (win) win.opener = null;
+
+  try {
+    const resp = await receiptMutation.mutateAsync({ orderId, paymentId });
+    const url = resp?.receiptUrl;
+    if (!url) throw new Error("Receipt URL missing");
+    if (!win) throw new Error("Popup blocked — please allow popups to view receipt.");
+    win.location.assign(url.startsWith("http") ? url : `https://${url}`);
+    win.focus();
+  } catch (e: any) {
+    if (win) win.close();
+    alert(e?.message || "Could not open receipt.");
+  }
+  };
+
 
   
   return (
@@ -62,7 +95,7 @@ export default function OrderDetail() {
       </div>
 
       {/* Receipt Link */}
-      <button
+      {/* <button
   className="btn-outline"
   disabled={
     receiptMutation.isPending ||
@@ -74,7 +107,7 @@ export default function OrderDetail() {
   if (win) win.opener = null; // ✅ security: prevent reverse-tabnabbing
 
   try {
-    const resp = await receiptMutation.mutateAsync();
+    const resp = await receiptMutation.mutateAsync({ orderId, paymentId: p._id });
 
     // support { url } or { receiptUrl } or raw string
     const rawUrl =
@@ -107,7 +140,7 @@ export default function OrderDetail() {
 
 >
   {receiptMutation.isPending ? "Opening…" : "View receipt"}
-</button>
+</button> */}
 
 
       {/* Items */}
@@ -177,6 +210,17 @@ export default function OrderDetail() {
         <FulfillmentList fulfillments={order.fulfillments} readOnly />
 
       </div>
+
+      {/* Payment History Section */}
+      <div className="card space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="font-semibold">Payments</div>
+          {receiptMutation.isPending ? <div className="text-xs text-gray-500">Opening…</div> : null}
+        </div>
+
+        <PaymentsTable payments={order.payments} onViewReceipt={handleViewReceipt} />
+      </div>
+
 
     </div>
   );

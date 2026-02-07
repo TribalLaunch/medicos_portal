@@ -9,6 +9,20 @@ export type OrderLineItem = {
   size?: string;
 };
 
+export type OrderPayment = {
+  _id?: string;
+  id?: string;
+  amount: number;
+  method: "card" | "ach" | "check" | "wire" | "cash" | "other";
+  reference?: string | null;
+  notes?: string | null;
+  paidAt?: string;
+  source: "customer_portal" | "backoffice";
+  stripeChargeId?: string | null;
+  stripePaymentIntentId?: string | null;
+  stripeSessionId?: string | null;
+};
+
 export type Order = {
   _id: string;
   orderNumber?: string;
@@ -30,6 +44,12 @@ export type Order = {
   total?: number;
 
   fulfillments?: Fulfillment[];
+
+  payments?: OrderPayment[];
+  amountPaid?: number;
+  balanceDue?: number;
+  invoiceStatus?: "open" | "partially_paid" | "paid" | "void";
+  paymentMethod?: "stripe" | "invoice";
 };
 
 export type PagedResponse<T> = {
@@ -111,8 +131,17 @@ export function createAdminOrder(payload: CreateManualOrderPayload) {
 
 export type ReceiptResponse = { receiptUrl: string };
 
-export function getOrderReceiptUrl(orderId: string) {
-  return getItem<ReceiptResponse>(`/orders/${orderId}/receipt`);
+export function getOrderReceiptUrl(orderId: string, paymentId: string) {
+  return getItem<ReceiptResponse>(`/orders/${orderId}/payments/${paymentId}/receipt`);
+}
+
+
+export function getPaymentReceiptUrl(orderId: string, paymentId: string) {
+  return getItem<{ receiptUrl: string }>(`/orders/${orderId}/payments/${paymentId}/receipt`);
+}
+
+export function getPaymentId(p: OrderPayment) {
+  return p._id || p.id || "";
 }
 
 

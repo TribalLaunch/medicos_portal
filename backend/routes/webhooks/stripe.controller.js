@@ -194,31 +194,15 @@ export async function stripeWebhook(req, res) {
         return res.status(200).json({ received: true });
       }
 
-      // Save Stripe Identifiers
-      // if (stripeSessionId) order.payment.stripeSessionId = stripeSessionId;
-      // if (paymentIntentId) order.payment.paymentIntentId = paymentIntentId;
-
-      // Retrieve Payment Intent to capture chargeId (receipt_url)
-      // if (paymentIntentId) {
-      //   try {
-      //     const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
-      //       expand: ["latest_charge"],
-      //     });
-
-      //     const chargeId = pi?.latest_charge?.id || null;
-      //     if (chargeId) order.payment.chargeId = chargeId;
-      //   } catch (err) {
-      //     console.warn(
-      //       "[stripeWebhook] Failed to retrieve PaymentIntent:",
-      //       err?.message || err,
-      //     );
-      //   }
-      // }
+      // Stripe Returns Values in Cents
+      const total_paid = session.amount_total / 100;
+      // const amount = cents ? Math.round((cents / 100) * 100) / 100 : null;
 
       if (order.status !== "paid") {
         order.payments = order.payments || [];
         order.payments.push({
-          amount,
+          // amount: session.amount_total,
+          amount: total_paid,
           method: "card",
           reference: stripeSessionId || null,
           notes: "Stripe order payment",
