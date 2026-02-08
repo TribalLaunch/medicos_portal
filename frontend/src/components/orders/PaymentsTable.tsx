@@ -42,18 +42,18 @@ function fmtDate(d?: string) {
 
             return (
               <tr key={pid || idx}>
-                 <td>{fmtDate(p.paidAt)}</td>
-                 <td>{p.method}</td>
-                 <td className="font-medium">{fmtMoney(p.amount)}</td>
+                 <td className="whitespace-nowrap">{fmtDate(p.paidAt)}</td>
+                 <td className="whitespace-nowrap">{p.method}</td>
+                 <td className="font-medium whitespace-nowrap">{fmtMoney(p.amount)}</td>
                  <td>{p.source}</td>
-                 <td className="text-sm text-gray-600">{p.reference || "-"}</td>
+                 <td className="text-sm text-gray-600 whitespace-nowrap">{p.reference || "-"}</td>
                 <td>
                   {canReceipt && onViewReceipt ? (
                     <button className="btn-outline" type="button" onClick={() => onViewReceipt(p)}>
                       View
                     </button>
                   ) : (
-                    <span className="text-sm text-gray-400">—</span>
+                    <span className="text-sm text-gray-400 whitespace-nowrap">—</span>
                   )}
                 </td>
               </tr>

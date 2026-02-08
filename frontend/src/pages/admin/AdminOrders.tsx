@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminOrders } from "../../services/orders.service";
 import { Link } from "react-router-dom";
+import { getBalanceDue, getDueDate, isInvoiceOrder } from "../../lib/orderFinance";
+import DueBadge from "../../components/ui/DueBadge";
 
 export default function AdminOrders() {
   const [q, setQ] = useState("");
@@ -85,14 +87,17 @@ export default function AdminOrders() {
                 <th>Source</th>
                 <th>Customer</th>
                 <th>Customer #</th>
-                <th>Email</th>
-                <th className="text-right">Items</th>
+                <th>Balance</th>
+                <th className="text-right">Due Date</th>
                 <th className="text-right">Total</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((o) => {
                 const total = getOrderTotal(o);
+                const balance = getBalanceDue(o);
+                const invoice = isInvoiceOrder(o);
+                const dueDate = getDueDate(o);
                 return (
                   <tr key={o._id} className="border-t">
                     <td className="py-2">
@@ -108,10 +113,20 @@ export default function AdminOrders() {
                     </td>
                     <td className="font-medium">{getCustomerName(o)}</td>
                     <td className="font-mono text-sm">{getCustomerNumber(o)}</td>
-                    <td>{getCustomerEmail(o)}</td>
-                    <td className="text-right">
-                      {o.items?.reduce((s: number, x: any) => s + (x.qty || 0), 0) || 0}
+                    <td className="whitespace-nowrap">
+                      <span className={balance > 0 ? "font-semibold" : "text-gray-500"}>
+                        {fmtMoney(balance)}
+                      </span>
+                      {balance > 0 ? <DueBadge /> : null}
                     </td>
+                    
+                    <td className="whitespace-nowrap">
+                    {invoice && balance > 0 && dueDate ? (
+                      <span className="text-sm">{dueDate.toLocaleDateString()}</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">—</span>
+                    )}
+                  </td>
                     <td className="text-right font-semibold">{fmtMoney(total)}</td>
                   </tr>
                 );

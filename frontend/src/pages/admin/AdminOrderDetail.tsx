@@ -2,10 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
 import { useAuthStore } from "../../app/store";
+import { getPaymentId, type OrderPayment } from "../../services/orders.service";
+import { useMutation } from "@tanstack/react-query";
+import { getPaymentReceiptUrl } from "../../services/orders.service";
+import { getAmountPaid, getBalanceDue, getDueDate, isInvoiceOrder } from "../../lib/orderFinance";
 
 // Fulfillment Components
 import FulfillmentList from "../../components/orders/FulfillmentList";
 import FulfillmentAdminPanel from "../../components/admin/FulfillmentAdminPanel";
+import PaymentsTable from "../../components/orders/PaymentsTable";
 
 function fmtMoney(n?: number) {
   const v = Number(n ?? 0);
@@ -14,14 +19,20 @@ function fmtMoney(n?: number) {
 
 export default function OrderDetail() {
   const { id } = useParams();
+  const orderId = id || "";
 
   const user = useAuthStore((s) => s.user);
 const canEditFulfillment = user?.role === "admin" || user?.role === "sales";
 
   const { data: order, isLoading, error } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ["order", orderId],
     queryFn: () => getOrderById(id!),
     enabled: !!id,
+  });
+
+    const receiptMutation = useMutation({
+    mutationFn: ({ orderId, paymentId }: { orderId: string; paymentId: string }) =>
+      getPaymentReceiptUrl(orderId, paymentId),
   });
 
   if (!id) return <div className="card">Missing order id.</div>;
@@ -30,6 +41,44 @@ const canEditFulfillment = user?.role === "admin" || user?.role === "sales";
   if (!order) return <div className="card">Order not found.</div>;
 
   const itemCount = order.items?.reduce((s, x) => s + (x.qty || 0), 0) || 0;
+
+  const handleViewReceipt = async (p: OrderPayment) => {
+    const paymentId = getPaymentId(p);
+  if (!paymentId) {
+    alert("This payment does not have an ID yet (cannot open receipt).");
+    return;
+  }
+
+  const win = window.open("about:blank", "_blank");
+  if (win) win.opener = null;
+
+  try {
+    const resp = await receiptMutation.mutateAsync({ orderId, paymentId });
+    const url = resp?.receiptUrl;
+    if (!url) throw new Error("Receipt URL missing");
+    if (!win) throw new Error("Popup blocked — please allow popups to view receipt.");
+    win.location.assign(url.startsWith("http") ? url : `https://${url}`);
+    win.focus();
+  } catch (e: any) {
+    if (win) win.close();
+    alert(e?.message || "Could not open receipt.");
+  }
+  };
+
+  const paymentsTotal =
+  (order.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+const amountPaid = Number.isFinite(order.amountPaid as any)
+  ? Number(order.amountPaid)
+  : paymentsTotal;
+
+const total = Number(order.total ?? order.subtotal ?? 0);
+
+const balanceDue = Number.isFinite(order.balanceDue as any)
+  ? Number(order.balanceDue)
+  : Math.max(0, total - amountPaid);
+
+   const dueDate = getDueDate(order)
 
   return (
     <div className="space-y-4">
@@ -100,12 +149,39 @@ const canEditFulfillment = user?.role === "admin" || user?.role === "sales";
             <span>Total</span>
             <span>{fmtMoney(order.total ?? order.subtotal)}</span>
           </div>
+
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Paid</span>
+            <span>{fmtMoney(amountPaid)}</span>
+          </div>
+
+          <div className="flex justify-between text-base font-semibold pt-2 border-t">
+            <span className="text-gray-600">Balance due</span>
+            <span className={balanceDue > 0 ? "font-semibold" : ""}>{fmtMoney(balanceDue)}</span>
+          </div>
+
+          {order.paymentMethod == "invoice" && dueDate ? (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Due date</span>
+              <span>{dueDate.toLocaleDateString()}</span>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       <div className="flex gap-2">
         <Link to="/sales/orders" className="btn-outline">Back to Orders</Link>
       </div>
+
+      {/* Payment History Section */}
+            <div className="card space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="font-semibold">Payments</div>
+                {receiptMutation.isPending ? <div className="text-xs text-gray-500">Opening…</div> : null}
+              </div>
+      
+              <PaymentsTable payments={order.payments} onViewReceipt={handleViewReceipt} />
+            </div>
 
       {/* Fulfillment Section */}
       <div className="card space-y-3">

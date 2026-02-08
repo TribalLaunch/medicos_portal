@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../../services/orders.service";
 import { useMutation } from "@tanstack/react-query";
-import { getOrderReceiptUrl, getPaymentReceiptUrl } from "../../services/orders.service";
+import { getPaymentReceiptUrl } from "../../services/orders.service";
 import { useAuthStore } from "../../app/store";
 import { Navigate } from "react-router-dom";
-// import type { OrderPayment } from "../../services/orders.service";
 import { getPaymentId, type OrderPayment } from "../../services/orders.service";
+import { getAmountPaid, getBalanceDue, getDueDate, isInvoiceOrder } from "../../lib/orderFinance";
+
 
 // Import Components
 import FulfillmentList from "../../components/orders/FulfillmentList";
@@ -31,10 +32,6 @@ export default function OrderDetail() {
     queryFn: () => getOrderById(id!),
     enabled: !!id,
   });
-
-//   const receiptMutation = useMutation({
-//   mutationFn: () => getOrderReceiptUrl(orderId),
-// });
 
   const receiptMutation = useMutation({
   mutationFn: ({ orderId, paymentId }: { orderId: string; paymentId: string }) =>
@@ -74,6 +71,20 @@ export default function OrderDetail() {
   };
 
 
+  const paymentsTotal =
+    (order.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+  const amountPaid = Number.isFinite(order.amountPaid as any)
+    ? Number(order.amountPaid)
+    : paymentsTotal;
+
+  const total = Number(order.total ?? order.subtotal ?? 0);
+
+  const balanceDue = Number.isFinite(order.balanceDue as any)
+    ? Number(order.balanceDue)
+    : Math.max(0, total - amountPaid);
+
+  const dueDate = getDueDate(order)
   
   return (
     <div className="space-y-4">
@@ -93,55 +104,6 @@ export default function OrderDetail() {
           {order.email ? <div className="text-xs text-gray-500 mt-1">{order.email}</div> : null}
         </div>
       </div>
-
-      {/* Receipt Link */}
-      {/* <button
-  className="btn-outline"
-  disabled={
-    receiptMutation.isPending ||
-    !(order.status === "paid" || order.status === "processing" || order.status === "shipped")
-  }
-  onClick={async () => {
-  // ✅ Open a real window handle first (no noreferrer/noopener here)
-  const win = window.open("about:blank", "_blank");
-  if (win) win.opener = null; // ✅ security: prevent reverse-tabnabbing
-
-  try {
-    const resp = await receiptMutation.mutateAsync({ orderId, paymentId: p._id });
-
-    // support { url } or { receiptUrl } or raw string
-    const rawUrl =
-      (resp as any)?.url ??
-      (resp as any)?.receiptUrl ??
-      resp;
-
-    const url =
-      typeof rawUrl === "string" && rawUrl.startsWith("http")
-        ? rawUrl
-        : typeof rawUrl === "string"
-          ? `https://${rawUrl}`
-          : "";
-
-    if (!url) throw new Error("Receipt URL missing");
-
-    // ✅ Navigate the NEW tab, never the current tab
-    if (win) {
-      win.location.href = url;
-      win.focus();
-    } else {
-      // If popup was blocked, tell user instead of redirecting current tab
-      throw new Error("Popup blocked — please allow popups to view receipt.");
-    }
-  } catch (e: any) {
-    if (win) win.close();
-    alert(e?.message || "Receipt not available yet. Try again in a moment.");
-  }
-}}
-
->
-  {receiptMutation.isPending ? "Opening…" : "View receipt"}
-</button> */}
-
 
       {/* Items */}
       <div className="card">
@@ -193,6 +155,23 @@ export default function OrderDetail() {
             <span>Total</span>
             <span>{fmtMoney(order.total ?? order.subtotal)}</span>
           </div>
+
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Paid</span>
+            <span>{fmtMoney(amountPaid)}</span>
+          </div>
+
+          <div className="flex justify-between text-base font-semibold pt-2 border-t">
+            <span className="text-gray-600">Balance due</span>
+            <span className={balanceDue > 0 ? "font-semibold" : ""}>{fmtMoney(balanceDue)}</span>
+          </div>
+
+          {order.paymentMethod == "invoice" && dueDate ? (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Due date</span>
+              <span>{dueDate.toLocaleDateString()}</span>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

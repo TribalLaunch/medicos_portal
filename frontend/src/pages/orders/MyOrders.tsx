@@ -1,6 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { listMyOrders } from "../../services/orders.service";
+import { getBalanceDue, getDueDate, isInvoiceOrder } from "../../lib/orderFinance";
+import { getShippingRollup, shipmentCounts } from "../../lib/shipping";
+
+// Components
+import DueBadge from "../../components/ui/DueBadge";
+import ShipBadge from "../../components/ui/ShipBadge";
+
+function fmtMoney(n?: number) {
+  const v = Number(n ?? 0);
+  return `$${v.toFixed(2)}`;
+}
 
 export default function MyOrders() {
   const { data, isLoading, error } = useQuery({
@@ -29,25 +40,63 @@ export default function MyOrders() {
             <thead className="text-left text-gray-600">
               <tr>
                 <th className="py-2">Date</th>
-                <th>Status</th>
-                <th className="text-right">Items</th>
+                <th>Shipping</th>
+                <th>Balance</th>
+                <th>Due Date</th>
+                <th className="text-right">Total</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
+              {orders.map((o) => { 
+                const balance = getBalanceDue(o);
+                const invoice = isInvoiceOrder(o);
+                const dueDate = getDueDate(o);
+                const ship = getShippingRollup(o.fulfillments);
+                const shipCounts = shipmentCounts(o.fulfillments);
+                return (
                 <tr key={o._id} className="border-t">
-                  {/* <td className="py-2">{new Date(o.createdAt).toLocaleString()}</td> */}
                   <td className="py-2">
-  <Link className="text-sky-700 underline" to={`/orders/${o._id}`}>
-    {new Date(o.createdAt).toLocaleString()}
-  </Link>
-</td>
-                  <td>
-                    <span className="badge">{o.status}</span>
+                    <Link className="text-sky-700 underline" to={`/orders/${o._id}`}>
+                      {new Date(o.createdAt).toLocaleString()}
+                    </Link>
                   </td>
-                  <td className="text-right">{o.items?.reduce((s, x) => s + x.qty, 0) || 0}</td>
+
+                  {/* <td>
+                    <span className="badge">{o.status}</span>
+                  </td> */}
+                  <td className="whitespace-nowrap">
+                    <div className="flex flex-col gap-1">
+                      <div>
+                        <ShipBadge status={ship} />
+                      </div>
+
+                      {ship === "partial_delivered" ? (
+                        <div className="text-xs text-gray-500">
+                          {shipCounts.delivered}/{shipCounts.total} shipments delivered
+                        </div>
+                      ) : null}
+                    </div>
+                  </td>
+
+                  <td className="whitespace-nowrap">
+                    <span className={balance > 0 ? "font-semibold" : "text-gray-500"}>
+                      {fmtMoney(balance)}
+                    </span>
+                    {balance > 0 ? <DueBadge /> : null}
+                  </td>
+
+
+                  <td className="whitespace-nowrap">
+                    {invoice && balance > 0 && dueDate ? (
+                      <span className="text-sm">{dueDate.toLocaleDateString()}</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">—</span>
+                    )}
+                  </td>
+
+                  <td className="text-right whitespace-nowrap">{fmtMoney(o.total)}</td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

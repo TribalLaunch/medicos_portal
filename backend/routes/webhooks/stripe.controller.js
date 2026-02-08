@@ -196,7 +196,6 @@ export async function stripeWebhook(req, res) {
 
       // Stripe Returns Values in Cents
       const total_paid = session.amount_total / 100;
-      // const amount = cents ? Math.round((cents / 100) * 100) / 100 : null;
 
       if (order.status !== "paid") {
         order.payments = order.payments || [];

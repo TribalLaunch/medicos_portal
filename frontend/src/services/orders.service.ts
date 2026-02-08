@@ -50,6 +50,7 @@ export type Order = {
   balanceDue?: number;
   invoiceStatus?: "open" | "partially_paid" | "paid" | "void";
   paymentMethod?: "stripe" | "invoice";
+  dueDate: string
 };
 
 export type PagedResponse<T> = {

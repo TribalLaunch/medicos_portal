@@ -39,3 +39,59 @@ export function labelShippingStatus(s: string) {
     default: return s;
   }
 }
+
+// Handling Partial Shipments. This is used in the orders listing for easy to look and see overall status
+export type ShippingRollup =
+  | "not_shipped"
+  | "pending"
+  | "labeled"
+  | "in_transit"
+  | "delivered"
+  | "partial_delivered"
+  | "exception";
+
+export function getShippingRollup(fulfillments?: Fulfillment[]): ShippingRollup {
+  const list = fulfillments || [];
+  if (list.length === 0) return "not_shipped";
+
+  const statuses = list.map((f) => f.status || "pending");
+
+  if (statuses.includes("exception")) return "exception";
+
+  const allDelivered = statuses.every((s) => s === "delivered");
+  if (allDelivered) return "delivered";
+
+  const anyDelivered = statuses.some((s) => s === "delivered");
+  if (anyDelivered) return "partial_delivered";
+
+  if (statuses.includes("in_transit")) return "in_transit";
+  if (statuses.includes("labeled")) return "labeled";
+  return "pending";
+}
+
+export function labelShippingRollup(s: ShippingRollup) {
+  switch (s) {
+    case "not_shipped":
+      return "Not shipped";
+    case "pending":
+      return "Pending";
+    case "labeled":
+      return "Label created";
+    case "in_transit":
+      return "In transit";
+    case "delivered":
+      return "Delivered";
+    case "partial_delivered":
+      return "Partial delivered";
+    case "exception":
+      return "Exception";
+    default:
+      return s;
+  }
+}
+
+export function shipmentCounts(fulfillments?: Fulfillment[]) {
+  const list = fulfillments || [];
+  const delivered = list.filter((f) => f.status === "delivered").length;
+  return { delivered, total: list.length };
+}
